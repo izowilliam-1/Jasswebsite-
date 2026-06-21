@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --danger: #ff6b6b;
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --light: #f8f9fa;
+            --dark: #1a1a1a;
+            --text-dark: #333;
+            --text-light: #666;
+        }
+
+        body.light-mode {
+            background: var(--light);
+            color: var(--text-dark);
+        }
+
+        body.dark-mode {
+            background: var(--dark);
+            color: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            transition: background 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto auto;
+            gap: 15px;
+            margin-bottom: 25px;
+            align-items: end;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .control-group input,
+        .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        body.dark-mode .control-group input,
+        body.dark-mode .control-group select {
+            background: #333;
+            color: white;
+            border-color: #555;
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #40c057;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+        }
+
+        .mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        body.dark-mode .sidebar {
+            background: #222;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-item:hover {
+            background: #f0f0f0;
+        }
+
+        body.dark-mode .category-item:hover {
+            background: #333;
+        }
+
+        .category-item.active {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .category-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Notes Grid */
+        .notes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .note-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            position: relative;
+            border-left: 5px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode .note-card {
+            background: #222;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .note-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .note-card.pinned {
+            order: -1;
+        }
+
+        .note-card.color-red { border-left-color: #ff6b6b; }
+        .note-card.color-blue { border-left-color: #667eea; }
+        .note-card.color-green { border-left-color: #51cf66; }
+        .note-card.color-yellow { border-left-color: #ffd43b; }
+        .note-card.color-purple { border-left-color: #764ba2; }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .note-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .note-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .note-icon-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .note-icon-btn:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .note-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .note-category {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .note-content {
+            color: var(--text-light);
+            margin-bottom: 12px;
+            flex: 1;
+            word-break: break-word;
+            white-space: pre-wrap;
+            max-height: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        body.dark-mode .note-content {
+            color: #aaa;
+        }
+
+        .note-timestamp {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: auto;
+        }
+
+        body.dark-mode .note-timestamp {
+            color: #777;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        body.dark-mode .modal-content {
+            background: #222;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select,
+        body.dark-mode .form-group textarea {
+            background: #333;
+            color: white;
+            border-color: #555;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: #333;
+            transform: scale(1.15);
+        }
+
+        body.dark-mode .color-option.selected {
+            border-color: white;
+        }
+
+        .color-red { background: #ff6b6b; }
+        .color-blue { background: #667eea; }
+        .color-green { background: #51cf66; }
+        .color-yellow { background: #ffd43b; }
+        .color-purple { background: #764ba2; }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .form-actions button {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="container">
+        <header>
+            <div>
+                <h1>📝 My Notes</h1>
+                <p>Capture your thoughts and ideas</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-icon mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+                <button class="btn btn-primary" onclick="openAddNoteModal()">+ New Note</button>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Search Notes</label>
+                <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterNotes()">
+            </div>
+            <div class="control-group">
+                <label>Filter by Category</label>
+                <select id="categoryFilter" onchange="filterNotes()">
+                    <option value="">All Categories</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="study">Study</option>
+                    <option value="ideas">Ideas</option>
+                    <option value="important">Important</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Sort By</label>
+                <select id="sortBy" onchange="filterNotes()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="alphabetical">Alphabetical</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="exportNotes()" title="Export all notes">📥 Export</button>
+            <button class="btn btn-danger" onclick="clearAllNotes()" title="Clear all notes">🗑️ Clear All</button>
+        </div>
+
+        <div class="main-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3>📂 Categories</h3>
+                <ul class="category-list">
+                    <li class="category-item active" onclick="filterByCategory('')">
+                        <span style="font-size: 1.2rem;">📌</span>
+                        All Notes
+                    </li>
+                    <li class="category-item" onclick="filterByCategory('work')">
+                        <span class="category-color" style="background: #667eea;"></span>
+                        Work
+                    </li>
+                    <li class="category-item" onclick="filterByCategory('personal')">
+                        <span class="category-color" style="background: #51cf66;"></span>
+                        Personal
+                    </li>
+                    <li class="category-item" onclick="filterByCategory('study')">
+                        <span class="category-color" style="background: #764ba2;"></span>
+                        Study
+                    </li>
+                    <li class="category-item" onclick="filterByCategory('ideas')">
+                        <span class="category-color" style="background: #ffd43b;"></span>
+                        Ideas
+                    </li>
+                    <li class="category-item" onclick="filterByCategory('important')">
+                        <span class="category-color" style="background: #ff6b6b;"></span>
+                        Important
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Notes Grid -->
+            <div>
+                <div id="notesContainer" class="notes-container"></div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon">📝</div>
+                    <h3>No notes yet</h3>
+                    <p>Create your first note to get started!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modalTitle">Add Note</span>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form onsubmit="saveNote(event)">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="noteTitle" placeholder="Note title..." required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="noteCategory" required>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="study">Study</option>
+                        <option value="ideas">Ideas</option>
+                        <option value="important">Important</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea id="noteContent" placeholder="Write your note..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <div class="color-picker">
+                        <button type="button" class="color-option color-red selected" onclick="selectColor('red')" data-color="red"></button>
+                        <button type="button" class="color-option color-blue" onclick="selectColor('blue')" data-color="blue"></button>
+                        <button type="button" class="color-option color-green" onclick="selectColor('green')" data-color="green"></button>
+                        <button type="button" class="color-option color-yellow" onclick="selectColor('yellow')" data-color="yellow"></button>
+                        <button type="button" class="color-option color-purple" onclick="selectColor('purple')" data-color="purple"></button>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Note</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'notes_app_data';
+        let notes = [];
+        let currentEditId = null;
+        let selectedColor = 'red';
+
+        // Initialize
+        function init() {
+            loadNotes();
+            renderNotes();
+        }
+
+        // Load notes from storage
+        function loadNotes() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            notes = stored ? JSON.parse(stored) : [];
+        }
+
+        // Save notes to storage
+        function saveNotes() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('light-mode');
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Load dark mode preference
+        window.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+            }
+            init();
+        });
+
+        // Open add note modal
+        function openAddNoteModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Add Note';
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteCategory').value = 'work';
+            document.getElementById('noteContent').value = '';
+            selectedColor = 'red';
+            selectColor('red');
+            document.getElementById('noteModal').classList.add('active');
+        }
+
+        // Open edit modal
+        function openEditNoteModal(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Note';
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteCategory').value = note.category;
+            document.getElementById('noteContent').value = note.content;
+            selectedColor = note.color;
+            selectColor(note.color);
+            document.getElementById('noteModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('noteModal').classList.remove('active');
+        }
+
+        // Select color
+        function selectColor(color) {
+            selectedColor = color;
+            document.querySelectorAll('.color-option').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelector(`[data-color="${color}"]`).classList.add('selected');
+        }
+
+        // Save note
+        function saveNote(e) {
+            e.preventDefault();
+
+            const noteData = {
+                title: document.getElementById('noteTitle').value,
+                content: document.getElementById('noteContent').value,
+                category: document.getElementById('noteCategory').value,
+                color: selectedColor
+            };
+
+            if (currentEditId) {
+                const note = notes.find(n => n.id === currentEditId);
+                if (note) {
+                    Object.assign(note, noteData);
+                    note.updatedAt = new Date().toISOString();
+                }
+            } else {
+                notes.unshift({
+                    id: Date.now(),
+                    ...noteData,
+                    pinned: false,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+            }
+
+            saveNotes();
+            renderNotes();
+            closeModal();
+        }
+
+        // Delete note
+        function deleteNote(id) {
+            if (confirm('Delete this note?')) {
+                notes = notes.filter(n => n.id !== id);
+                saveNotes();
+                renderNotes();
+            }
+        }
+
+        // Toggle pin
+        function togglePin(id) {
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                note.pinned = !note.pinned;
+                saveNotes();
+                renderNotes();
+            }
+        }
+
+        // Filter notes
+        function filterNotes() {
+            renderNotes();
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            document.getElementById('categoryFilter').value = category;
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.category-item').classList.add('active');
+            renderNotes();
+        }
+
+        // Get filtered and sorted notes
+        function getFilteredNotes() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            let filtered = notes.filter(note => {
+                const matchesSearch = note.title.toLowerCase().includes(search) || 
+                                     note.content.toLowerCase().includes(search);
+                const matchesCategory = !categoryFilter || note.category === categoryFilter;
+                return matchesSearch && matchesCategory;
+            });
+
+            // Sort
+            if (sortBy === 'oldest') {
+                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sortBy === 'alphabetical') {
+                filtered.sort((a, b) => a.title.localeCompare(b.title));
+            } else {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+
+            // Pinned notes first
+            const pinned = filtered.filter(n => n.pinned);
+            const unpinned = filtered.filter(n => !n.pinned);
+            return [...pinned, ...unpinned];
+        }
+
+        // Render notes
+        function renderNotes() {
+            const container = document.getElementById('notesContainer');
+            const emptyState = document.getElementById('emptyState');
+            const filtered = getFilteredNotes();
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.innerHTML = filtered.map(note => {
+                const date = new Date(note.createdAt).toLocaleDateString();
+                const time = new Date(note.createdAt).toLocaleTimeString();
+                return `
+                    <div class="note-card color-${note.color} ${note.pinned ? 'pinned' : ''}">
+                        <div class="note-header">
+                            <div class="note-title">${escapeHtml(note.title)}</div>
+                            <div class="note-icons">
+                                <button class="note-icon-btn" onclick="togglePin(${note.id})" title="${note.pinned ? 'Unpin' : 'Pin'}">
+                                    ${note.pinned ? '📌' : '📍'}
+                                </button>
+                                <button class="note-icon-btn" onclick="openEditNoteModal(${note.id})" title="Edit">✏️</button>
+                                <button class="note-icon-btn" onclick="deleteNote(${note.id})" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="note-category">${note.category.toUpperCase()}</div>
+                        <div class="note-content">${escapeHtml(note.content)}</div>
+                        <div class="note-timestamp">${date} ${time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Export notes
+        function exportNotes() {
+            if (notes.length === 0) {
+                alert('No notes to export!');
+                return;
+            }
+
+            const exportData = notes.map(note => 
+                `TITLE: ${note.title}\nCATEGORY: ${note.category}\nCREATED: ${new Date(note.createdAt).toLocaleString()}\n---\n${note.content}\n\n`
+            ).join('\n');
+
+            const blob = new Blob([exportData], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `notes-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Clear all notes
+        function clearAllNotes() {
+            if (confirm('Delete ALL notes? This cannot be undone!')) {
+                notes = [];
+                saveNotes();
+                renderNotes();
+            }
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('noteModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

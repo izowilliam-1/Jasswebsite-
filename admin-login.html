@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JASS Admin - Secure Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #003366 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-section .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .logo-section h1 {
+            color: #003366;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .logo-section p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #003366;
+            box-shadow: 0 0 8px rgba(0, 51, 102, 0.15);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #003366 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 51, 102, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid #f5c6cb;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #003366;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #003366;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-link a {
+            color: #764ba2;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .forgot-link a:hover {
+            color: #003366;
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #003366;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .logo-section .icon {
+                font-size: 2.5rem;
+            }
+
+            .logo-section h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="icon">🔐</div>
+            <h1>JASS Admin</h1>
+            <p>Secure Portal Access</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="staffCode">2026 Administrative Staff Code</label>
+                <input 
+                    type="password" 
+                    id="staffCode" 
+                    placeholder="Enter staff code"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="rememberMe"> Remember this device
+                </label>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loadingState">
+                <div class="spinner"></div>
+                <div class="loading-text">Verifying credentials...</div>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+        </form>
+
+        <!-- Forgot Link -->
+        <div class="forgot-link">
+            <a href="#" onclick="handleForgotCode(event)">Forgot your staff code?</a>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <strong>Test Credentials (for demo):</strong>
+            Username: <code>admin</code><br>
+            Staff Code: <code>JASS2026</code>
+        </div>
+    </div>
+
+    <script>
+        const LOGIN_STORAGE_KEY = 'jass_admin_session';
+        const SESSION_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+        
+        // Default admin credentials (should be stored securely in production)
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            staffCode: 'JASS2026'
+        };
+
+        // Initialize
+        function init() {
+            checkExistingSession();
+            setupFormValidation();
+        }
+
+        // Check if user has an existing valid session
+        function checkExistingSession() {
+            const session = getSession();
+            if (session && isSessionValid(session)) {
+                redirectToDashboard();
+            }
+        }
+
+        // Get session from storage
+        function getSession() {
+            const stored = localStorage.getItem(LOGIN_STORAGE_KEY);
+            return stored ? JSON.parse(stored) : null;
+        }
+
+        // Check if session is still valid
+        function isSessionValid(session) {
+            if (!session) return false;
+            const now = new Date().getTime();
+            return (now - session.timestamp) < SESSION_TIMEOUT;
+        }
+
+        // Handle login form submission
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const staffCode = document.getElementById('staffCode').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const errorMsg = document.getElementById('errorMessage');
+            const loadingState = document.getElementById('loadingState');
+            const loginBtn = document.getElementById('loginBtn');
+
+            // Clear previous error
+            errorMsg.classList.remove('show');
+            errorMsg.textContent = '';
+
+            // Validate input
+            if (!username || !staffCode) {
+                showError('Please enter both username and staff code');
+                return;
+            }
+
+            if (username.length < 3) {
+                showError('Username must be at least 3 characters');
+                return;
+            }
+
+            if (staffCode.length < 6) {
+                showError('Staff code must be at least 6 characters');
+                return;
+            }
+
+            // Show loading state
+            loadingState.style.display = 'block';
+            loginBtn.disabled = true;
+
+            // Simulate API call delay
+            setTimeout(() => {
+                // Verify credentials
+                if (username === ADMIN_CREDENTIALS.username && 
+                    staffCode === ADMIN_CREDENTIALS.staffCode) {
+                    
+                    // Create session
+                    const session = {
+                        username: username,
+                        timestamp: new Date().getTime(),
+                        rememberMe: rememberMe
+                    };
+
+                    localStorage.setItem(LOGIN_STORAGE_KEY, JSON.stringify(session));
+                    
+                    // Success animation
+                    loadingState.innerHTML = '<div style="color: #2e7d32; font-size: 1.2rem;">✓ Login successful!</div>';
+                    
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        redirectToDashboard();
+                    }, 800);
+                } else {
+                    // Failed login
+                    loadingState.style.display = 'none';
+                    loginBtn.disabled = false;
+                    
+                    // Determine which field is incorrect
+                    if (username !== ADMIN_CREDENTIALS.username) {
+                        showError('Invalid username. Please check and try again.');
+                    } else {
+                        showError('Invalid staff code. Please check and try again.');
+                    }
+                    
+                    // Clear password field
+                    document.getElementById('staffCode').value = '';
+                    document.getElementById('staffCode').focus();
+                }
+            }, 1500);
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = message;
+            errorMsg.classList.add('show');
+        }
+
+        // Redirect to dashboard
+        function redirectToDashboard() {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        // Handle forgot code link
+        function handleForgotCode(event) {
+            event.preventDefault();
+            alert('Please contact the school administration office to reset your staff code.\n\nSchool Contact: admin@jass.edu\nPhone: +211 (0) 956 123 456');
+        }
+
+        // Setup form validation for real-time feedback
+        function setupFormValidation() {
+            const username = document.getElementById('username');
+            const staffCode = document.getElementById('staffCode');
+
+            username.addEventListener('focus', function() {
+                this.style.borderColor = '#003366';
+            });
+
+            staffCode.addEventListener('focus', function() {
+                this.style.borderColor = '#003366';
+            });
+        }
+
+        // Prevent back button after login
+        window.addEventListener('load', function() {
+            history.pushState(null, null, window.location.href);
+            window.addEventListener('popstate', function() {
+                const session = getSession();
+                if (session && isSessionValid(session)) {
+                    history.pushState(null, null, window.location.href);
+                }
+            });
+        });
+
+        // Start initialization
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

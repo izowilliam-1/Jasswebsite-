@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juba Adventist Secondary School | Official Portal</title>
+    <style>
+        :root {
+            --jass-blue: #003366;
+            --jass-red: #cc0000;
+            --jass-yellow: #ffcc00;
+            --jass-light: #f8f9fa;
+            --jass-dark: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--jass-light); 
+            color: #333; 
+            line-height: 1.6; 
+        }
+
+        .container { 
+            max-width: 1140px; 
+            margin: auto; 
+            padding: 20px; 
+        }
+        
+        /* Branding & Header */
+        header { 
+            background: var(--jass-blue); 
+            color: white; 
+            padding: 50px 20px; 
+            text-align: center; 
+            border-bottom: 8px solid var(--jass-yellow); 
+        }
+
+        .logo-placeholder { 
+            height: 80px; 
+            width: 80px; 
+            background: white; 
+            border-radius: 50%; 
+            margin: 0 auto 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--jass-blue); 
+            font-weight: bold; 
+            font-size: 1.5rem;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .motto { 
+            font-style: italic; 
+            color: var(--jass-yellow); 
+            font-size: 1.1rem; 
+            margin-top: 10px; 
+            letter-spacing: 1px; 
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--jass-dark);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--jass-yellow);
+        }
+
+        /* Grid Layout */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 25px; 
+            margin: 30px 0; 
+        }
+
+        .card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            border-top: 5px solid transparent;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: var(--jass-blue);
+            margin-bottom: 15px;
+        }
+        
+        .section-title { 
+            text-align: center; 
+            margin-top: 50px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            color: var(--jass-blue);
+        }
+
+        .section-title h2 {
+            margin-bottom: 10px;
+        }
+
+        .bar { 
+            width: 60px; 
+            height: 5px; 
+            background: var(--jass-yellow); 
+            margin: 10px auto; 
+            border-radius: 10px; 
+        }
+
+        /* Buttons */
+        .btn { 
+            display: inline-block; 
+            padding: 14px 28px; 
+            border: none; 
+            border-radius: 6px; 
+            color: white; 
+            text-decoration: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            width: 100%; 
+            box-sizing: border-box; 
+            text-align: center; 
+        }
+
+        .btn-blue { 
+            background: var(--jass-blue); 
+        }
+
+        .btn-red { 
+            background: var(--jass-red); 
+        }
+
+        .btn:hover { 
+            filter: brightness(1.2); 
+            transform: translateY(-2px); 
+        }
+
+        /* Table */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            border-radius: 8px; 
+            overflow: hidden; 
+        }
+
+        th, td { 
+            padding: 12px; 
+            text-align: left; 
+            border-bottom: 1px solid #eee; 
+        }
+
+        th { 
+            background: var(--jass-blue); 
+            color: white; 
+        }
+
+        /* Admin Panel */
+        #admin-panel { 
+            display: none; 
+            background: white; 
+            border: 2px solid var(--jass-blue); 
+            border-radius: 15px; 
+            padding: 30px; 
+            margin-top: 20px; 
+        }
+
+        .terminal { 
+            background: #1e1e1e; 
+            color: #00ff00; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-family: monospace; 
+            font-size: 0.85rem; 
+            margin-top: 20px; 
+            height: 120px; 
+            overflow-y: auto; 
+            border: 1px solid #444; 
+        }
+
+        input[type="password"], input[type="file"] { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: var(--jass-blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--jass-red);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--jass-dark); 
+            color: white; 
+            padding: 50px 20px; 
+            text-align: center; 
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 30px 20px; }
+            header h1 { font-size: 1.5rem; }
+            .motto { font-size: 0.9rem; }
+            nav ul { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-placeholder">JASS</div>
+    <h1>Juba Adventist Secondary School</h1>
+    <div class="motto">"Wholistic Education for a Brighter Future"</div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#academics">Academics</a></li>
+        <li><a href="#schedule">Schedule</a></li>
+        <li><a href="#fees">Fees</a></li>
+        <li><a href="#staff">Staff</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <a href="index.html" class="back-btn">← Back to Portal Home</a>
+
+    <section id="staff">
+        <div class="section-title"><h2>I. Staff Command Center</h2><div class="bar"></div></div>
+        
+        <div id="login-form" class="card" style="max-width: 450px; margin: auto; text-align: center; border-color: var(--jass-blue);">
+            <h3>🔒 Secure Portal Access</h3>
+            <p>Enter the 2026 Administrative Staff Code to manage uploads.</p>
+            <input type="password" id="staffKey" placeholder="Enter Security Code">
+            <button onclick="authorize()" class="btn btn-blue">UNLOCK DASHBOARD</button>
+        </div>
+
+        <div id="admin-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--jass-blue); margin: 0;">🛡️ Executive Dashboard</h3>
+                <button onclick="deauthorize()" class="btn btn-blue" style="width: auto; padding: 8px 15px;">SECURE EXIT</button>
+            </div>
+            
+            <div class="grid">
+                <div class="card" style="border-color: var(--jass-blue);">
+                    <h4>Principal's Workspace</h4>
+                    <p><small>Publish School News & Circulars</small></p>
+                    <input type="file" id="pUpload">
+                    <button onclick="simUpload('pUpload', 'Principal')" class="btn btn-blue">PUBLISH TO SITE</button>
+                </div>
+                <div class="card" style="border-color: var(--jass-red);">
+                    <h4>Admin/Finance Workspace</h4>
+                    <p><small>Update 2026 Fee Structures</small></p>
+                    <input type="file" id="fUpload">
+                    <button onclick="simUpload('fUpload', 'Finance')" class="btn btn-red">UPDATE FEES</button>
+                </div>
+            </div>
+
+            <div class="terminal" id="consoleLog">
+                > System initialized. Waiting for Staff Credentials...
+            </div>
+        </div>
+    </section>
+
+    <section id="academics">
+        <div class="section-title"><h2>II. Academic Excellence</h2><div class="bar"></div></div>
+        <div class="grid">
+            <div class="card">
+                <h3>Director of Studies</h3>
+                <p>JASS follows the National Curriculum, enhanced by spiritual mentorship. Our goal is to develop the Head, Heart, and Hand.</p>
+                <p><strong>Status:</strong> 2026 Enrollment is ongoing at Munuki Roundabout.</p>
+            </div>
+            <div class="card">
+                <h3>Vision & Mission</h3>
+                <p><strong>Vision:</strong> To be a center of educational excellence rooted in Seventh-day Adventist values.</p>
+                <p><strong>Mission:</strong> To provide wholistic education that develops the whole person - mentally, physically, spiritually, and socially.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="schedule">
+        <div class="section-title"><h2>III. Daily Schedule</h2><div class="bar"></div></div>
+        <div class="grid">
+            <div class="card">
+                <h3>School Timetable</h3>
+                <table>
+                    <tr>
+                        <th>Time</th>
+                        <th>Activity</th>
+                    </tr>
+                    <tr>
+                        <td>07:30 AM</td>
+                        <td>Morning Devotion</td>
+                    </tr>
+                    <tr>
+                        <td>08:00 AM</td>
+                        <td>Classes Commence</td>
+                    </tr>
+                    <tr>
+                        <td>10:30 AM</td>
+                        <td>Break Time</td>
+                    </tr>
+                    <tr>
+                        <td>01:00 PM</td>
+                        <td>Lunch & Prayer</td>
+                    </tr>
+                    <tr>
+                        <td>02:00 PM</td>
+                        <td>Afternoon Classes</td>
+                    </tr>
+                    <tr>
+                        <td>03:30 PM</td>
+                        <td>Clubs & Labor</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="fees">
+        <div class="section-title"><h2>IV. Resources & Downloads</h2><div class="bar"></div></div>
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <div class="card">
+                <h3>📄 2026 Fee Structure</h3>
+                <p>Download the current fee schedule for all classes.</p>
+                <a href="#" class="btn btn-red" onclick="alert('Fee document loading...'); return false;">Download PDF</a>
+            </div>
+            <div class="card">
+                <h3>📅 Term 1 Calendar</h3>
+                <p>Important dates, holidays, and exam schedules.</p>
+                <a href="#" class="btn btn-blue" onclick="alert('Calendar loading...'); return false;">Download PDF</a>
+            </div>
+            <div class="card">
+                <h3>📋 Admission Form</h3>
+                <p>Apply for enrollment at JASS for 2026.</p>
+                <a href="#" class="btn btn-blue" onclick="alert('Admission form loading...'); return false;">Download Form</a>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p><strong>Juba Adventist Secondary School</strong></p>
+    <p>Munuki SDA Roundabout, Juba, South Sudan</p>
+    <p style="font-size: 0.8rem; color: #888; margin-top: 20px;">&copy; 2026 JASS - Built for Wholistic Education</p>
+</footer>
+
+<script>
+    const LOG = document.getElementById('consoleLog');
+
+    function authorize() {
+        const key = "JASS2026";
+        const input = document.getElementById('staffKey').value;
+        if (input === key) {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            printLog("Access Granted. Administrator logged in.");
+        } else {
+            alert("Security Error: Invalid Access Code.");
+        }
+    }
+
+    function deauthorize() {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'none';
+        document.getElementById('staffKey').value = '';
+        printLog("Administrator logged out.");
+    }
+
+    function simUpload(id, role) {
+        const file = document.getElementById(id).files[0];
+        if (!file) {
+            alert("Please select a file first.");
+            return;
+        }
+        printLog(`[UPLOAD] ${role} successfully published: ${file.name}`);
+        alert("File Published: " + file.name);
+    }
+
+    function printLog(msg) {
+        const time = new Date().toLocaleTimeString();
+        LOG.innerHTML += `<br>> [${time}] ${msg}`;
+        LOG.scrollTop = LOG.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

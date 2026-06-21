@@ -1,25 +1,351 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Content Manager | JASS</title>
-  <!-- Real authentication: Netlify Identity widget -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JASS Portal - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #ffcc00;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .app-card:nth-child(1) { animation-delay: 0.1s; }
+        .app-card:nth-child(2) { animation-delay: 0.2s; }
+        .app-card:nth-child(3) { animation-delay: 0.3s; }
+        .app-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 3rem;
+        }
+
+        .app-card h3 {
+            padding: 20px 20px 10px;
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .app-card p {
+            padding: 0 20px 20px;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .app-card a {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .app-card a:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .features {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                padding: 25px;
+            }
+        }
+
+        .coming-soon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffcc00;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .app-card {
+            position: relative;
+        }
+    </style>
 </head>
 <body>
-  <!-- Decap CMS (formerly Netlify CMS) — real Git-backed login and editing -->
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
-    }
-  </script>
+    <header>
+        <h1>🏫 JASS Portal</h1>
+        <p>Juba Adventist Secondary School - Digital Hub</p>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h2>Welcome to Your Digital Workspace</h2>
+            <p>Access all your tools and resources in one place. Organize your tasks, manage your school life, and stay productive.</p>
+        </div>
+
+        <div class="apps-grid">
+            <div class="app-card">
+                <div class="app-icon">✓</div>
+                <h3>To-Do List</h3>
+                <p>Manage your tasks efficiently with local storage. Create, organize, and track your daily activities.</p>
+                <a href="todo-app.html">Open App →</a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-icon">📚</div>
+                <h3>School Portal</h3>
+                <p>Access school information, announcements, schedules, and administrative resources.</p>
+                <a href="school-portal.html">Open App →</a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-icon">🧮</div>
+                <h3>Calculator</h3>
+                <p>Perform quick calculations with a clean, intuitive interface. Perfect for homework and exams.</p>
+                <div class="coming-soon">Coming Soon</div>
+                <a href="#" onclick="alert('Coming soon!'); return false;">Open App →</a>
+            </div>
+
+            <div class="app-card">
+                <div class="app-icon">📝</div>
+                <h3>Notes</h3>
+                <p>Take and organize your notes with automatic cloud sync. Never lose important information.</p>
+                <div class="coming-soon">Coming Soon</div>
+                <a href="#" onclick="alert('Coming soon!'); return false;">Open App →</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>Platform Features</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h4>💾 Local Storage</h4>
+                    <p>All your data is saved locally on your device. No internet required for most features.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📱 Responsive Design</h4>
+                    <p>Works perfectly on desktop, tablet, and mobile devices. Access from anywhere.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Fast & Reliable</h4>
+                    <p>Lightweight applications that load instantly. No waiting, no lag.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔒 Secure</h4>
+                    <p>Your data is protected with encryption and best security practices.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎨 Beautiful UI</h4>
+                    <p>Modern, clean interfaces designed for the best user experience.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🚀 Always Growing</h4>
+                    <p>New features and tools are added regularly. Check back often!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>Juba Adventist Secondary School</strong></p>
+        <p>Digital Portal - 2026</p>
+        <p style="font-size: 0.9rem; margin-top: 10px;">Munuki SDA Roundabout, Juba, South Sudan</p>
+        <div class="footer-links">
+            <a href="school-portal.html">School Info</a>
+            <a href="#contact">Contact</a>
+            <a href="#about">About</a>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+        });
+    </script>
 </body>
 </html>
