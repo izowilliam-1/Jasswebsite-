@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>JASS Letterhead</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent:#0b5ed7;
+    --muted:#555;
+    --paper-width:210mm;
+    --paper-height:297mm;
+  }
+  @page { size: A4; margin: 20mm; }
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#111}
+  .sheet{box-sizing:border-box; width:100%; min-height:100%; padding:28mm 20mm 20mm; position:relative}
+  header{
+    display:flex; align-items:center; gap:16px; border-bottom:2px solid rgba(11,94,215,0.12); padding-bottom:10px;
+  }
+  .logo{
+    width:84px; height:84px; border-radius:8px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;
+  }
+  .school-info{line-height:1.05}
+  .school-name{font-size:20px; font-weight:700; color:var(--accent)}
+  .school-sub{font-size:12px; color:var(--muted); margin-top:4px}
+  .meta{position:absolute; right:20mm; top:28mm; text-align:right; color:var(--muted); font-size:12px}
+  main{margin-top:20px; font-size:14px; color:#222}
+  .footer{
+    position:absolute; left:20mm; right:20mm; bottom:12mm; border-top:1px solid rgba(0,0,0,0.06); padding-top:8px; color:var(--muted); font-size:12px; display:flex; justify-content:space-between;
+  }
+  .bank-list{margin:8px 0 0; font-size:13px}
+  .bolder{font-weight:600}
+</style>
+</head>
+<body>
+  <section class="sheet">
+    <header>
+      <div class="logo" aria-hidden="true">JASS</div>
+      <div class="school-info">
+        <div class="school-name">JUBA SEVENTH DAY ADVENTIST SECONDARY SCHOOL</div>
+        <div class="school-sub">Wholistic Education for Brighter Future — Complete Secondary School • S1–S4 • South Sudan National Curriculum</div>
+        <div class="school-sub" style="margin-top:6px">Inside SDA Church Compound, SDA Roundabout, Munuki, Juba, Central Equatoria, South Sudan</div>
+      </div>
+    </header>
+
+    <div class="meta">
+      Date: <span id="date">2026-06-21</span><br>
+      Contact: Bursar Office
+    </div>
+
+    <main>
+      <p><strong>To:</strong> [Recipient name]</p>
+      <p><strong>Subject:</strong> [Subject / Purpose of letter]</p>
+
+      <p>Dear [Name],</p>
+
+      <p>
+        This is an official letter from Juba Seventh Day Adventist Secondary School (JASS).
+        [Insert body text here — admission, fees confirmation, official notice, etc.]
+      </p>
+
+      <p>Sincerely,</p>
+      <p class="bolder">Bursar / School Administrator</p>
+
+      <section style="margin-top:18px">
+        <div class="bolder">School Fees Payment Banks</div>
+        <div class="bank-list">
+          <div><span class="bolder">ECOBANK SOUTH SUDAN</span><br>SSP Account: 6950010770 • USD Account: 6950010771</div>
+          <div style="margin-top:6px"><span class="bolder">EDEN COMMERCIAL BANK</span><br>SSP Account: 0102101620719 • USD Account: 0102204051211</div>
+          <div style="margin-top:6px">Payment Instructions: After payment, bring receipt to Bursar Office for confirmation.</div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">
+      <div>JASS Portal — Admin login: 2FA + Master Password + 6-digit PIN • PWA Results Portal</div>
+      <div>Website: <a href="http://index.html">index.html</a></div>
+    </div>
+  </section>
+
+<script>
+  // Auto-insert today's date in YYYY-MM-DD format
+  document.getElementById('date').textContent = new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>
