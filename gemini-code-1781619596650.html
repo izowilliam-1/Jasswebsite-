@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>JASS Portal Dashboard</title>
+</head>
+<body>
+
+<header>
+<img src="assets/school_banner.jpg" alt="JASS Banner">
+<div>
+<h1>JASS Portal</h1>
+<p id="portal-subtitle">Secure School Management System</p>
+</div>
+</header>
+
+<section id="login-screen" class="container">
+    <div class="login-box">
+        <h2>Welcome to JASS</h2>
+        <p>Select your school role to access the portal demo</p>
+        <div class="roles-grid">
+            <div class="card" onclick="loginAs('Student')">
+                <span class="icon">🎓</span>
+                <h3>Student Panel</h3>
+                <p>Assignments, results, and student notices.</p>
+            </div>
+            <div class="card" onclick="loginAs('Teacher')">
+                <span class="icon">👨🏽‍🏫</span>
+                <h3>Teacher Panel</h3>
+                <p>Upload student notes and track attendance.</p>
+            </div>
+            <div class="card" onclick="loginAs('Parent')">
+                <span class="icon">👨🏽‍👩🏽‍👧🏽</span>
+                <h3>Parent Panel</h3>
+                <p>Monitor academic progress and announcements.</p>
+            </div>
+            <div class="card" onclick="loginAs('Admin')">
+                <span class="icon">🛠️</span>
+                <h3>Admin Panel</h3>
+                <p>Manage system admissions and school data.</p>
+            </div>
+            <div class="card" onclick="loginAs('Principal')">
+                <span class="icon">🏫</span>
+                <h3>Principal Panel</h3>
+                <p>Review school-wide reports and approvals.</p>
+            </div>
+            <div class="card" onclick="loginAs('Admissions')">
+                <span class="icon">📝</span>
+                <h3>Admissions Panel</h3>
+                <p>Process applications and new student enrollment.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-screen" class="container hidden">
+    <div class="dashboard-header">
+        <h2 id="welcome-message">Welcome Back</h2>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="panel-Student" class="role-panel hidden">
+        <div class="panel-grid">
+            <div class="panel-card">
+                <h4>📚 Submit Assignment</h4>
+                <input type="text" id="assignment-title" placeholder="e.g., Math Exercise 4B">
+                <button class="action-btn" onclick="submitAssignment()">Submit Work</button>
+                <ul id="student-assignment-list" style="margin-top: 15px; padding-left: 20px; color: #555;">
+                    </ul>
+            </div>
+            <div class="panel-card"><h4>📊 Recent Results</h4><p>Chemistry Midterm: 85% | English Essay: A</p></div>
+            <div class="panel-card"><h4>🔔 Student Notices</h4><p>Assembly tomorrow morning at 8:00 AM.</p></div>
+        </div>
+    </div>
+
+    <div id="panel-Teacher" class="role-panel hidden">
+        <div class="panel-grid">
+            <div class="panel-card">
+                <h4>📅 Today's Attendance (Senior 1 Alpha)</h4>
+                <form id="attendance-form" onsubmit="saveAttendance(event)">
+                    <label style="display:block; margin: 8px 0;"><input type="checkbox" id="student1"> Deng Emmanuel</label>
+                    <label style="display:block; margin: 8px 0;"><input type="checkbox" id="student2"> Kiden Mary</label>
+                    <label style="display:block; margin: 8px 0;"><input type="checkbox" id="student3"> Lodu John</label>
+                    <button type="submit" class="action-btn">Submit Attendance</button>
+                </form>
+                <p id="attendance-status" style="margin-top:10px; color: green; font-weight: bold;"></p>
+            </div>
+            <div class="panel-card"><h4>📝 Grading Queue</h4><p>Senior 3 Geography Papers (14 pending)</p></div>
+            <div class="panel-card"><h4>📤 Lesson Uploads</h4><p>Upload new PDF reading materials for next week.</p></div>
+        </div>
+    </div>
+
+    <div id="panel-Parent" class="role-panel hidden">
+        <div class="panel-grid">
+            <div class="panel-card"><h4>📈 Performance Tracking</h4><p>View your child's term progress reports.</p></div>
+            <div class="panel-card"><h4>💳 School Fees Balance</h4><p>Term 1 Balance: Fully Paid</p></div>
+            <div class="panel-card"><h4>✉️ Teacher Messages</h4><p>No unread messages from class teachers.</p></div>
+        </div>
+    </div>
+
+    <div id="panel-Admin" class="role-panel hidden">
+        <div class="panel-grid">
+            <div class="panel-card"><h4>⚙️ System Controls</h4><p>Manage portal accounts and permissions.</p></div>
+            <div class="panel-card"><h4>🗄️ Database Backup</h4><p>Last automated cloud backup: Today at 04:00 AM</p></div>
+        </div>
+    </div>
+
+    <div id="panel-Principal" class="role-panel hidden">
+        <div class="panel-grid">
+            <div class="panel-card"><h4>📈 School Statistics</h4><p>Total Enrollment: 450 Students | Teacher Attendance: 98%</p></div>
+            <div class="panel-card"><h4>✍️ Pending Approvals</h4><p>Budget requests and upcoming field trip waivers.</p></div>
+        </div>
+    </div>
+
+    <div id="panel-Admissions" class="role-panel hidden">
+        <div class="panel-grid">
+            <div class="panel-card">
+                <h4>📂 Process New Application</h4>
+                <input type="text" id="applicant-name" placeholder="Applicant Full Name">
+                <select id="applicant-class">
+                    <option value="Senior One">Senior One</option>
+                    <option value="Senior Two">Senior Two</option>
+                    <option value="Senior Three">Senior Three</option>
+                    <option value="Senior Four">Senior Four</option>
+                </select>
+                <button class="action-btn" onclick="registerApplicant()">Register Student</button>
+            </div>
+            <div class="panel-card">
+                <h4>🏫 Active Applications</h4>
+                <ul id="applications-list" style="padding-left: 20px; color: #555;">
+                    </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Load stored data on startup
+document.addEventListener("DOMContentLoaded", () => {
+    renderAssignments();
+    renderApplications();
+    checkAttendanceStatus();
+});
+
+function loginAs(role) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').classList.remove('hidden');
+    document.getElementById('welcome-message').innerText = role + " Dashboard";
+    document.getElementById('portal-subtitle').innerText = "JASS " + role + " Portal Active";
+    
+    const panels = document.querySelectorAll('.role-panel');
+    panels.forEach(panel => panel.classList.add('hidden'));
+    
+    document.getElementById('panel-' + role).classList.remove('hidden');
+}
+
+function logout() {
+    document.getElementById('dashboard-screen').classList.add('hidden');
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('portal-subtitle').innerText = "Secure School Management System";
+}
+
+/* --- STUDENT FEATURE: ASSIGNMENT SUBMISSION --- */
+function submitAssignment() {
+    const titleInput = document.getElementById('assignment-title');
+    if (!titleInput.value.trim()) return alert("Please enter an assignment title.");
+    
+    let assignments = JSON.parse(localStorage.getItem('jass_assignments')) || [];
+    assignments.push(titleInput.value.trim());
+    localStorage.setItem('jass_assignments', JSON.stringify(assignments));
+    
+    titleInput.value = "";
+    renderAssignments();
+}
+
+function renderAssignments() {
+    const list = document.getElementById('student-assignment-list');
+    let assignments = JSON.parse(localStorage.getItem('jass_assignments')) || ["Physics Lab Report (Default)"];
+    list.innerHTML = assignments.map(task => `<li>✅ ${task} - <span style="color:green; font-size:12px;">Submitted</span></li>`).join('');
+}
+
+/* --- TEACHER FEATURE: ATTENDANCE TRACKER --- */
+function saveAttendance(event) {
+    event.preventDefault();
+    localStorage.setItem('jass_attendance_saved', 'true');
+    checkAttendanceStatus();
+}
+
+function checkAttendanceStatus() {
+    if (localStorage.getItem('jass_attendance_saved') === 'true') {
+        document.getElementById('attendance-status').innerText = "✓ Attendance submitted successfully!";
+    }
+}
+
+/* --- ADMISSIONS FEATURE: APPLICANT REGISTRATION --- */
+function registerApplicant() {
+    const nameInput = document.getElementById('applicant-name');
+    const classInput = document.getElementById('applicant-class');
+    if (!nameInput.value.trim()) return alert("Please enter the applicant's name.");
+    
+    let apps = JSON.parse(localStorage.getItem('jass_apps')) || [];
+    apps.push({ name: nameInput.value.trim(), grade: classInput.value });
+    localStorage.setItem('jass_apps', JSON.stringify(apps));
+    
+    nameInput.value = "";
+    renderApplications();
+}
+
+function renderApplications() {
+    const list = document.getElementById('applications-list');
+    let apps = JSON.parse(localStorage.getItem('jass_apps')) || [
+        {name: "James Deng", grade: "Senior One"},
+        {name: "Mary Yar", grade: "Senior Three"}
+    ];
+    list.innerHTML = apps.map(app => `<li>👤 ${app.name} (${app.grade})</li>`).join('');
+}
+</script>
+
+</body>
+</html>

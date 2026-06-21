@@ -1,0 +1,35 @@
+/* Add these styles to the bottom of your existing style.css file */
+
+/* Form Input Styling */
+input[type="text"], select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Action Button Layout */
+.action-btn {
+    background: #0f3f8c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.action-btn:hover {
+    background: #0b2e66;
+}
+
+/* List Spacing */
+ul li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}

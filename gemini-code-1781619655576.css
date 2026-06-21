@@ -1,0 +1,143 @@
+/* Base Variables & Setup */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    background: #f0f4f8;
+    color: #333;
+}
+
+/* Header Banner Layout */
+header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    background: #0f3f8c;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+header img {
+    width: 140px;
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+header p {
+    margin: 5px 0 0 0;
+    opacity: 0.8;
+    font-size: 14px;
+}
+
+/* Main Layout Containers */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.login-box {
+    text-align: center;
+}
+.login-box h2 {
+    color: #0f3f8c;
+    margin-bottom: 5px;
+}
+.login-box p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Interactive Selection Grid */
+.roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border: 1px solid #e1e8ed;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-align: left;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(15, 63, 140, 0.15);
+    border-color: #0f3f8c;
+}
+.card .icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 10px;
+}
+.card h3 {
+    margin: 0 0 10px 0;
+    color: #0f3f8c;
+}
+.card p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Action Control Bars */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e1e8ed;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+.dashboard-header h2 {
+    margin: 0;
+    color: #0f3f8c;
+}
+.logout-btn {
+    background: #c62828;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+.logout-btn:hover {
+    background: #b71c1c;
+}
+
+/* Inner Application Dashboard Grids */
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+.panel-card {
+    background: #ffffff;
+    padding: 20px;
+    border-left: 5px solid #0f3f8c;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.panel-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+.panel-card p {
+    margin: 0;
+    color: #666;
+    font-size: 15px;
+}
+
+/* Utility Class for JavaScript Control */
+.hidden {
+    display: none !important;
+}

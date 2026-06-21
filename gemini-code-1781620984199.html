@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>JASS Multi-Panel Portal Pro</title>
+</head>
+<body>
+
+<section id="login-screen" class="container">
+    <header class="login-header">
+        <img src="assets/school_banner.jpg" alt="JASS Banner">
+        <h1>JASS Secure Portal Login</h1>
+        <p>Enter your credentials to access your portal account</p>
+    </header>
+    
+    <div class="login-form-card">
+        <div id="login-error" class="error-banner hidden">❌ Invalid Username or Password. Try again!</div>
+        
+        <label for="username">Username / ID Number</label>
+        <input type="text" id="username" placeholder="e.g., jass.student, jass.clubs, jass.prefect">
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••">
+        
+        <button class="action-btn" onclick="authenticateUser()">Secure Sign In</button>
+        
+        <div class="demo-credentials">
+            <strong>🔑 Access Credentials (Password is 'jasspass'):</strong>
+            <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding-left: 15px;">
+                <li>Student: <code>jass.student</code></li>
+                <li>Teacher: <code>jass.teacher</code></li>
+                <li>Admin: <code>jass.admin</code></li>
+                <li>Principal: <code>jass.principal</code></li>
+                <li>Parent: <code>jass.parent</code></li>
+                <li>Admissions: <code>jass.admissions</code></li>
+                <li>🧬 Clubs: <code>jass.clubs</code></li>
+                <li>🎖️ Prefect: <code>jass.prefect</code></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-screen" class="app-layout hidden">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/school_banner.jpg" alt="Logo">
+            <div>
+                <h3>JASS Portal</h3>
+                <span id="role-badge">Role</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" id="menu-home" class="menu-item active" onclick="switchMainPanel('home')">🏠 Core Dashboard</a>
+            <a href="#" id="menu-logs" class="menu-item" onclick="switchMainPanel('logs')">📋 System Logs Ledger</a>
+            <a href="#" id="menu-clubs" class="menu-item" onclick="switchMainPanel('clubs')">🧬 Clubs Directory</a>
+            <a href="#" id="menu-prefects" class="menu-item" onclick="switchMainPanel('prefects')">🎖️ Prefect Control</a>
+        </nav>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h2 id="welcome-message">Dashboard Window</h2>
+            <div class="search-bar-container">
+                <input type="text" id="global-search-input" placeholder="🔍 Live search active directory items..." oninput="filterActiveLists()">
+            </div>
+            <div class="system-status">● Secure Session Active</div>
+        </header>
+
+        <div class="analytics-strip">
+            <div class="strip-card">
+                <span class="strip-label">📁 Assignments Received</span>
+                <span class="strip-value" id="stat-assignments">0</span>
+            </div>
+            <div class="strip-card">
+                <span class="strip-label">🧬 Registered Clubs</span>
+                <span class="strip-value" id="stat-clubs">0</span>
+            </div>
+            <div class="strip-card">
+                <span class="strip-label">📋 Pending Club Applications</span>
+                <span class="strip-value" id="stat-pending-clubs">0</span>
+            </div>
+            <div class="strip-card">
+                <span class="strip-label">👤 Intake Applicants</span>
+                <span class="strip-value" id="stat-apps">0</span>
+            </div>
+        </div>
+
+        <div id="global-noticeboard" class="notice-banner hidden">
+            <h4>📢 Official School Notice</h4>
+            <p id="notice-text">No active announcements at this time.</p>
+        </div>
+
+        <div id="subview-home" class="subview-panel">
+            
+            <div id="panel-Student" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>📚 Dynamic Assignment Sandbox</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('student-add-box')" title="Add Assignment">+</button>
+                        </div>
+                        <div id="student-add-box" class="creator-slide-box hidden">
+                            <input type="text" id="assignment-title" placeholder="Enter assignment name (e.g., Biology Lab)">
+                            <button class="action-btn" onclick="submitAssignment()">Upload File Instance</button>
+                        </div>
+                        <ul id="student-assignment-list" class="data-list searchable-list"></ul>
+                    </div>
+
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>🧬 Online Club Joining Request</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('student-club-box')" title="Join Club">+</button>
+                        </div>
+                        <div id="student-club-box" class="creator-slide-box hidden">
+                            <label for="student-club-select">Select Club Target</label>
+                            <select id="student-club-select">
+                                <option value="Mathematics Elite Alliance">Mathematics Elite Alliance</option>
+                                <option value="Debate Society & Public Speaking">Debate Society & Public Speaking</option>
+                                <option value="SDA Youth Choir">SDA Youth Choir</option>
+                            </select>
+
+                            <fieldset class="requirements-fieldset">
+                                <legend>🛡️ Mandatory Eligibility Confirmations</legend>
+                                <label class="checkbox-label"><input type="checkbox" id="req-performance"> I maintain Good Academic Performance</label>
+                                <label class="checkbox-label"><input type="checkbox" id="req-behavior"> I have a clean Good Behavior track record</label>
+                                <label class="checkbox-label"><input type="checkbox" id="req-english"> I possess Fluent Good English Speaking abilities</label>
+                            </fieldset>
+
+                            <button class="action-btn" style="margin-top:10px;" onclick="submitClubApplication()">Submit Digital Request</button>
+                        </div>
+                        <p style="font-size:13px; color:#64748b; margin-bottom: 10px;">Apply online. System checks performance, behavioral status and speech fluencies automatically.</p>
+                        <ul id="my-club-applications" class="data-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Teacher" class="role-panel hidden">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>📅 Classroom Attendance Registry</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('teacher-add-box')" title="Mark Attendance">+</button>
+                    </div>
+                    <div id="teacher-add-box" class="creator-slide-box hidden">
+                        <form onsubmit="saveAttendance(event)">
+                            <label><input type="checkbox" id="student1"> Deng Emmanuel (S3 Alpha)</label>
+                            <label style="margin-top:8px;"><input type="checkbox" id="student2"> Kiden Mary (S3 Alpha)</label>
+                            <button type="submit" class="action-btn" style="margin-top:12px;">Submit Daily Ledger</button>
+                        </form>
+                    </div>
+                    <p id="attendance-status" class="success-text"></p>
+                </div>
+            </div>
+
+            <div id="panel-Parent" class="role-panel hidden">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>📈 Academic Progress & Fee Tracking</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('parent-add-box')" title="Request Statement">+</button>
+                    </div>
+                    <div id="parent-add-box" class="creator-slide-box hidden">
+                        <p style="font-size:13px; color:#475569; margin:0 0 10px 0;">Request official printed statement from bursar office:</p>
+                        <button class="action-btn" onclick="requestParentStatement()">Generate Certified PDF Statement</button>
+                    </div>
+                    <p>Term 1 Grade Performance Range: <strong>Excellent (A)</strong></p>
+                </div>
+            </div>
+
+            <div id="panel-Admin" class="role-panel hidden">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>📢 Administrative Notice Transmitter</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('admin-add-box')" title="Draft Notice">+</button>
+                    </div>
+                    <div id="admin-add-box" class="creator-slide-box hidden">
+                        <textarea id="admin-notice-input" placeholder="Type global system notice message..."></textarea>
+                        <button class="action-btn" onclick="publishNotice()">Broadcast Payload to Network</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Principal" class="role-panel hidden">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>📢 Executive Broadcast Orders</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('principal-add-box')" title="Draft Order">+</button>
+                    </div>
+                    <div id="principal-add-box" class="creator-slide-box hidden">
+                        <textarea id="principal-notice-input" placeholder="Type official executive directive statement..."></textarea>
+                        <button class="action-btn" onclick="publishPrincipalNotice()">Sign & Broadcast Executive Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Admissions" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>📂 Intake Applications Engine</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('admissions-add-box')" title="New Applicant">+</button>
+                        </div>
+                        <div id="admissions-add-box" class="creator-slide-box hidden">
+                            <input type="text" id="applicant-name" placeholder="Applicant Full Name">
+                            <button class="action-btn" onclick="registerApplicant()">Record Applicant Entry</button>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <h4>🏫 Application Directory Ledger</h4>
+                        <ul id="applications-list" class="data-list searchable-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Clubs" class="role-panel hidden">
+                <div class="panel-card">
+                    <h3>🧬 Organization Subsystem Workspace</h3>
+                    <p>Navigate to the <strong>Clubs Directory Panel</strong> in the left sidebar configuration matrix to process approvals and requirements screens.</p>
+                </div>
+            </div>
+
+            <div id="panel-Prefects" class="role-panel hidden">
+                <div class="panel-card">
+                    <h3>🎖️ Student Leadership Console</h3>
+                    <p>Navigate to the <strong>Prefect Control Panel</strong> in the left sidebar configuration matrix to execute logs.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="subview-logs" class="subview-panel hidden">
+            <div class="panel-card log-panel-container">
+                <div class="log-panel-header">
+                    <h3>🛡️ System Security Audit Logs Ledger</h3>
+                    <button class="clear-log-btn" onclick="clearSystemLogs()">Clear Log History</button>
+                </div>
+                <div id="system-log-terminal" class="log-terminal searchable-list"></div>
+            </div>
+        </div>
+
+        <div id="subview-clubs" class="subview-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>🧬 Add Master Club Instance</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('clubs-view-add-box')" title="Add Club">+</button>
+                    </div>
+                    <div id="clubs-view-add-box" class="creator-slide-box hidden">
+                        <input type="text" id="club-name" placeholder="e.g., JASS Science Club">
+                        <label for="club-day">Weekly Meeting Day</label>
+                        <select id="club-day">
+                            <option value="Wednesday">Wednesday Afternoon</option>
+                            <option value="Friday">Friday Afternoon</option>
+                        </select>
+                        <button class="action-btn" onclick="createNewClub()">Add Club to System</button>
+                    </div>
+                    <h4>🏫 System Roster Directory</h4>
+                    <ul id="clubs-list" class="data-list searchable-list"></ul>
+                </div>
+                
+                <div class="panel-card">
+                    <h4>📝 Student Online Applications & Requirements Screening</h4>
+                    <p style="font-size:12px; color:#475569; margin-top:-10px;">Requires: [Passing Grades] + [Clean Conduct] + [English Eloquence]</p>
+                    <div id="club-screening-container" class="searchable-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="subview-prefects" class="subview-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>🎖️ Record Duty Operation Log</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('prefects-view-add-box')" title="Add Report">+</button>
+                    </div>
+                    <div id="prefects-view-add-box" class="creator-slide-box hidden">
+                        <input type="text" id="duty-location" placeholder="e.g., Main Hall Assembly">
+                        <label for="duty-status">Enforcement Assessment</label>
+                        <select id="duty-status">
+                            <option value="Orderly & Quiet">Orderly & Quiet</option>
+                            <option value="Minor Disruption Reported">Minor Disruption Reported</option>
+                        </select>
+                        <button class="action-btn" onclick="submitDutyLog()">File Prefect Report</button>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <h4>📋 Today's Filed Prefect Performance Logs</h4>
+                    <ul id="prefect-logs-list" class="data-list searchable-list"></ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</section>
+
+<script>
+let activeSessionRole = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderAssignments();
+    renderApplications();
+    checkAttendanceStatus();
+    loadGlobalNotice();
+    renderSystemLogs();
+    renderClubs();
+    renderPrefectLogs();
+    renderClubApplications();
+    calculateLiveMetrics();
+});
+
+function filterActiveLists() {
+    const searchVal = document.getElementById('global-search-input').value.toLowerCase().trim();
+    const lists = document.querySelectorAll('.searchable-list');
+    lists.forEach(list => {
+        const items = list.children;
+        for (let item of items) {
+            if (item.innerText.toLowerCase().includes(searchVal)) {
+                item.style.display = "";

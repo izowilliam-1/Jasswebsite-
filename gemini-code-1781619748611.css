@@ -1,0 +1,140 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f9;
+    color: #333;
+}
+
+/* LOGIN BANNER STYLES */
+.container {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.login-header img {
+    width: 250px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.login-header h1 { color: #0f3f8c; margin: 15px 0 5px 0; }
+
+/* ROLES GRID SYSTEM */
+.roles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    border: 1px solid #e2e8f0;
+}
+.card:hover {
+    transform: translateY(-4px);
+    border-color: #0f3f8c;
+    box-shadow: 0 6px 12px rgba(15,63,140,0.15);
+}
+.card .icon { font-size: 32px; display: block; margin-bottom: 10px; }
+.card h3 { margin: 0 0 8px 0; color: #0f3f8c; }
+.card p { margin: 0; color: #666; font-size: 14px; line-height: 1.4; }
+
+/* PROFESSIONAL SIDEBAR WRAPPER LAYOUT */
+.app-layout-flex {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 260px;
+    background: #0f3f8c;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+.sidebar-brand h3 { margin: 0; font-size: 18px; }
+#role-badge { background: #c62828; padding: 2px 8px; font-size: 11px; border-radius: 4px; font-weight: bold; }
+
+.sidebar-menu { margin-top: 30px; flex-grow: 1; }
+.menu-item {
+    display: block;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+.menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.15); color: white; }
+
+/* RIGHT PANEL MANAGEMENT CONTENT */
+.main-content { flex-grow: 1; padding: 30px; background: #f8fafc; box-sizing: border-box; }
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 15px;
+}
+.content-header h2 { margin: 0; color: #0f3f8c; }
+.system-status { font-size: 12px; color: #2e7d32; font-weight: bold; }
+
+/* GLOBAL INTER-PANEL NOTICEBOARD DISPLAY */
+.notice-banner {
+    background: #fff3e0;
+    border-left: 5px solid #ff9800;
+    padding: 15px 20px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 25px;
+}
+.notice-banner h4 { margin: 0 0 5px 0; color: #e65100; }
+.notice-banner p { margin: 0; color: #5d4037; font-size: 15px; }
+
+/* DATA CONTAINER DISPLAY PANELS */
+.panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.panel-card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+.panel-card h4 { margin: 0 0 15px 0; color: #334155; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+
+/* FORMS & ACTIONS BUTTON CONFIG */
+input[type="text"], select, textarea {
+    width: 100%; padding: 10px; margin: 8px 0 15px 0;
+    border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px;
+}
+textarea { height: 80px; resize: none; }
+label { display: block; margin: 10px 0; font-size: 14px; color: #475569; }
+.action-btn {
+    background: #0f3f8c; color: white; border: none; padding: 10px 15px;
+    border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s;
+}
+.action-btn:hover { background: #0b2e66; }
+.logout-btn {
+    background: #c62828; color: white; border: none; padding: 12px;
+    border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.2s;
+}
+.logout-btn:hover { background: #b71c1c; }
+
+/* DATA PRESENTATION BADGES */
+.data-list { padding-left: 20px; color: #475569; }
+.data-list li { margin-bottom: 10px; font-size: 14px; }
+.badge { background: #e8f5e9; color: #2e7d32; padding: 2px 6px; font-size: 11px; font-weight: bold; border-radius: 4px; margin-left: 5px; }
+.success-text { color: #2e7d32; font-weight: bold; font-size: 14px; margin-top: 10px; }
+
+/* CONTROL COMPONENT CONFIG */
+.hidden { display: none !important; }

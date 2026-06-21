@@ -1,0 +1,411 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>JASS Multi-Panel Portal</title>
+</head>
+<body>
+
+<section id="login-screen" class="container">
+    <header class="login-header">
+        <img src="assets/school_banner.jpg" alt="JASS Banner">
+        <h1>JASS Secure Portal Login</h1>
+        <p>Enter your credentials to access your portal account</p>
+    </header>
+    
+    <div class="login-form-card">
+        <div id="login-error" class="error-banner hidden">❌ Invalid Username or Password. Try again!</div>
+        
+        <label for="username">Username / ID Number</label>
+        <input type="text" id="username" placeholder="e.g., jass.student, jass.clubs, jass.prefect">
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••">
+        
+        <button class="action-btn" onclick="authenticateUser()">Secure Sign In</button>
+        
+        <div class="demo-credentials">
+            <strong>🔑 Access Credentials (Password is 'jasspass'):</strong>
+            <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding-left: 15px;">
+                <li>Student: <code>jass.student</code></li>
+                <li>Teacher: <code>jass.teacher</code></li>
+                <li>Admin: <code>jass.admin</code></li>
+                <li>Principal: <code>jass.principal</code></li>
+                <li>Parent: <code>jass.parent</code></li>
+                <li>Admissions: <code>jass.admissions</code></li>
+                <li>🧬 Clubs: <code>jass.clubs</code></li>
+                <li>🎖️ Prefect: <code>jass.prefect</code></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-screen" class="app-layout hidden">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/school_banner.jpg" alt="Logo">
+            <div>
+                <h3>JASS Portal</h3>
+                <span id="role-badge">Role</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" id="menu-home" class="menu-item active" onclick="switchMainPanel('home')">🏠 Core Dashboard</a>
+            <a href="#" id="menu-logs" class="menu-item" onclick="switchMainPanel('logs')">📋 System Logs Ledger</a>
+            <a href="#" id="menu-clubs" class="menu-item" onclick="switchMainPanel('clubs')">🧬 Clubs Directory</a>
+            <a href="#" id="menu-prefects" class="menu-item" onclick="switchMainPanel('prefects')">🎖️ Prefect Control</a>
+        </nav>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h2 id="welcome-message">Dashboard Window</h2>
+            <div class="system-status">● Secure Session Active</div>
+        </header>
+
+        <div id="global-noticeboard" class="notice-banner hidden">
+            <h4>📢 Official School Notice</h4>
+            <p id="notice-text">No active announcements at this time.</p>
+        </div>
+
+
+        <div id="subview-home" class="subview-panel">
+            
+            <div id="panel-Student" class="role-panel hidden">
+                <div class="analytics-row">
+                    <div class="id-card-badge">
+                        <div class="id-card-header">JASS STUDENT ID</div>
+                        <div class="id-card-body">
+                            <div class="id-avatar">🎓</div>
+                            <div class="id-details">
+                                <h4>Deng Abraham</h4>
+                                <p><strong>ID Number:</strong> JASS-2026-0489</p>
+                                <p><strong>Class:</strong> Senior 3 Alpha</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-grid" style="margin-top:15px;">
+                    <div class="panel-card">
+                        <h4>📚 Submit Assignment</h4>
+                        <input type="text" id="assignment-title" placeholder="e.g., Physics Lab Report">
+                        <button class="action-btn" onclick="submitAssignment()">Submit Work</button>
+                        <ul id="student-assignment-list" class="data-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Teacher" class="role-panel hidden">
+                <div class="panel-card">
+                    <h4>📅 Today's Attendance (Senior 1 Alpha)</h4>
+                    <form onsubmit="saveAttendance(event)">
+                        <label><input type="checkbox" id="student1"> Deng Emmanuel</label>
+                        <button type="submit" class="action-btn">Submit Attendance</button>
+                    </form>
+                    <p id="attendance-status" class="success-text"></p>
+                </div>
+            </div>
+
+            <div id="panel-Parent" class="role-panel hidden">
+                <div class="panel-card"><h4>📈 Academic Progress</h4><p>Term 1 Grade Performance Range: <strong>Excellent (A)</strong></p></div>
+            </div>
+
+            <div id="panel-Admin" class="role-panel hidden">
+                <div class="panel-card">
+                    <h4>📢 Broadcast New School Notice</h4>
+                    <textarea id="admin-notice-input" placeholder="Type an announcement..."></textarea>
+                    <button class="action-btn" onclick="publishNotice()">Publish Notice</button>
+                </div>
+            </div>
+
+            <div id="panel-Principal" class="role-panel hidden">
+                <div class="panel-card"><h4>📢 Executive Broadcast</h4><textarea id="principal-notice-input" placeholder="Type an official statement..."></textarea><button class="action-btn" onclick="publishPrincipalNotice()">Publish Executive Order</button></div>
+            </div>
+
+            <div id="panel-Admissions" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card">
+                        <h4>📂 Process New Application</h4>
+                        <input type="text" id="applicant-name" placeholder="Applicant Name"><button class="action-btn" onclick="registerApplicant()">Register Student</button>
+                    </div>
+                    <div class="panel-card"><h4>🏫 Active Applications Tracker</h4><ul id="applications-list" class="data-list"></ul></div>
+                </div>
+            </div>
+
+            <div id="panel-Clubs" class="role-panel hidden">
+                <div class="panel-card"><h3>🧬 Organization Terminal</h3><p>Use the left sidebar navigation menu to view and edit full club configurations.</p></div>
+            </div>
+
+            <div id="panel-Prefects" class="role-panel hidden">
+                <div class="panel-card"><h3>🎖️ Student Leadership Console</h3><p>Use the left sidebar navigation menu to manage duty logs and assemblies.</p></div>
+            </div>
+
+        </div>
+
+
+        <div id="subview-logs" class="subview-panel hidden">
+            <div class="panel-card log-panel-container">
+                <div class="log-panel-header">
+                    <h3>🛡️ Secure System Security Audit Logs Ledger</h3>
+                    <button class="clear-log-btn" onclick="clearSystemLogs()">Clear Log History</button>
+                </div>
+                <p style="font-size: 14px; color:#64748b; margin-top:-10px; margin-bottom:15px;">Tracks login sessions, file assignments, notices, and registry events across all 8 multi-panels.</p>
+                <div id="system-log-terminal" class="log-terminal"></div>
+            </div>
+        </div>
+
+
+        <div id="subview-clubs" class="subview-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>🧬 Register New School Club Instance</h4>
+                    <input type="text" id="club-name" placeholder="e.g., JASS Science Club, Debate Society">
+                    <label for="club-day">Weekly Meeting Day Selection</label>
+                    <select id="club-day">
+                        <option value="Wednesday">Wednesday Afternoon</option>
+                        <option value="Friday">Friday Afternoon</option>
+                    </select>
+                    <button class="action-btn" onclick="createNewClub()">Add Club to System</button>
+                </div>
+                <div class="panel-card">
+                    <h4>🏫 Active Clubs Master Directory Ledger</h4>
+                    <ul id="clubs-list" class="data-list"></ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="subview-prefects" class="subview-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>🎖️ Record Assembly / Yard Duty Operation Log</h4>
+                    <input type="text" id="duty-location" placeholder="e.g., Main Hall Assembly, West Block Corridor">
+                    <label for="duty-status">Enforcement Assessment</label>
+                    <select id="duty-status">
+                        <option value="Orderly & Quiet">Orderly & Quiet</option>
+                        <option value="Minor Disruption Reported">Minor Disruption Reported</option>
+                    </select>
+                    <button class="action-btn" onclick="submitDutyLog()">File Prefect Report</button>
+                </div>
+                <div class="panel-card">
+                    <h4>📋 Today's Filed Prefect Performance Logs</h4>
+                    <ul id="prefect-logs-list" class="data-list"></ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</section>
+
+<script>
+let activeSessionRole = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderAssignments();
+    renderApplications();
+    checkAttendanceStatus();
+    loadGlobalNotice();
+    renderSystemLogs();
+    renderClubs();
+    renderPrefectLogs();
+});
+
+// MULTI-PANEL VIEW MANAGER SWAP LOGIC
+function switchMainPanel(panelName) {
+    // 1. Hide all main subview container panels
+    const subviews = document.querySelectorAll('.subview-panel');
+    subviews.forEach(view => view.classList.add('hidden'));
+    
+    // 2. Un-highlight all menu navigation buttons
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => item.classList.remove('active'));
+    
+    // 3. Display target configuration subview panel layout
+    document.getElementById('subview-' + panelName).classList.remove('hidden');
+    
+    // 4. Highlight current link selection path
+    document.getElementById('menu-' + panelName).classList.add('active');
+    
+    // Write structural navigation track metrics
+    const cUser = localStorage.getItem('jass_current_user') || "User";
+    writeLog(cUser, activeSessionRole, `Switched dashboard workspace pane view to [${panelName.toUpperCase()} PANEL].`);
+}
+
+function writeLog(user, role, action) {
+    const timestamp = new Date().toLocaleTimeString();
+    const dateStr = new Date().toLocaleDateString();
+    const entry = `[${dateStr} ${timestamp}] (${role.toUpperCase()}) ${user}: ${action}`;
+    let logs = JSON.parse(localStorage.getItem('jass_system_logs')) || [];
+    logs.unshift(entry);
+    localStorage.setItem('jass_system_logs', JSON.stringify(logs));
+    renderSystemLogs();
+}
+
+function renderSystemLogs() {
+    const logTerminal = document.getElementById('system-log-terminal');
+    if (!logTerminal) return;
+    let logs = JSON.parse(localStorage.getItem('jass_system_logs')) || [];
+    if (logs.length === 0) {
+        logTerminal.innerHTML = `<div class="log-entry" style="color:#64748b; font-style:italic;">No security logs recorded yet.</div>`;
+        return;
+    }
+    logTerminal.innerHTML = logs.map(log => `<div class="log-entry">${log}</div>`).join('');
+}
+
+function clearSystemLogs() {
+    if(confirm("Flush security logs?")) {
+        localStorage.setItem('jass_system_logs', JSON.stringify([]));
+        renderSystemLogs();
+    }
+}
+
+function authenticateUser() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    const errorBanner = document.getElementById('login-error');
+    errorBanner.classList.add('hidden');
+    
+    if (pass === 'jasspass') {
+        if (user === 'jass.student') { loginAs('Student', 'Abraham Deng'); return; }
+        if (user === 'jass.teacher') { loginAs('Teacher', 'Madam Kiden'); return; }
+        if (user === 'jass.admin') { loginAs('Admin', 'SysAdmin'); return; }
+        if (user === 'jass.principal') { loginAs('Principal', 'Principal Lodu'); return; }
+        if (user === 'jass.parent') { loginAs('Parent', 'Parent Rep'); return; }
+        if (user === 'jass.admissions') { loginAs('Admissions', 'Registrar Officer'); return; }
+        if (user === 'jass.clubs') { loginAs('Clubs', 'Club Coordinator'); return; }
+        if (user === 'jass.prefect') { loginAs('Prefects', 'Head Prefect Lado'); return; }
+    }
+    errorBanner.classList.remove('hidden');
+}
+
+function loginAs(role, displayUser = "User") {
+    activeSessionRole = role;
+    localStorage.setItem('jass_current_user', displayUser);
+    
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').classList.remove('app-layout-flex');
+    document.getElementById('dashboard-screen').classList.add('app-layout-flex'); 
+    
+    document.getElementById('role-badge').innerText = role;
+
+    const noticeboard = document.getElementById('global-noticeboard');
+    noticeboard.classList.toggle('hidden', !(role === 'Student' || role === 'Parent'));
+    
+    const panels = document.querySelectorAll('.role-panel');
+    panels.forEach(panel => panel.classList.add('hidden'));
+    document.getElementById('panel-' + role).classList.remove('hidden');
+    
+    // Always fall back to Home View space upon initial user login authentication redirect
+    switchMainPanel('home');
+    
+    writeLog(displayUser, role, "Authenticated and initiated dynamic system session.");
+}
+
+function logout() {
+    writeLog(localStorage.getItem('jass_current_user') || "User", activeSessionRole, "Terminated secure portal session.");
+    document.getElementById('username').value = "";
+    document.getElementById('password').value = "";
+    document.getElementById('dashboard-screen').classList.remove('app-layout-flex');
+    document.getElementById('dashboard-screen').classList.add('hidden');
+    document.getElementById('login-screen').classList.remove('hidden');
+}
+
+/* --- OPERATION BACKEND LOGIC ACTIONS --- */
+function createNewClub() {
+    const cName = document.getElementById('club-name').value.trim();
+    const cDay = document.getElementById('club-day').value;
+    if(!cName) return alert("Please type a Club Name.");
+    let clubs = JSON.parse(localStorage.getItem('jass_clubs')) || [];
+    clubs.push({ name: cName, day: cDay });
+    localStorage.setItem('jass_clubs', JSON.stringify(clubs));
+    writeLog(localStorage.getItem('jass_current_user'), activeSessionRole, `Registered club entity: "${cName}"`);
+    document.getElementById('club-name').value = "";
+    renderClubs();
+}
+function renderClubs() {
+    const list = document.getElementById('clubs-list');
+    if(!list) return;
+    let clubs = JSON.parse(localStorage.getItem('jass_clubs')) || [
+        { name: "Mathematics Elite Alliance", day: "Wednesday" },
+        { name: "SDA Youth Choir", day: "Friday" }
+    ];
+    list.innerHTML = clubs.map(c => `<li>🧬 <strong>${c.name}</strong> - Meets on ${c.day}s <span class="badge">Active</span></li>`).join('');
+}
+function submitDutyLog() {
+    const loc = document.getElementById('duty-location').value.trim();
+    const stat = document.getElementById('duty-status').value;
+    if(!loc) return alert("Specify Duty Location.");
+    let logs = JSON.parse(localStorage.getItem('jass_prefect_logs')) || [];
+    logs.push({ location: loc, status: stat });
+    localStorage.setItem('jass_prefect_logs', JSON.stringify(logs));
+    writeLog(localStorage.getItem('jass_current_user'), activeSessionRole, `Filed prefect status update log card for: "${loc}"`);
+    document.getElementById('duty-location').value = "";
+    renderPrefectLogs();
+}
+// Prefect and Core Stubs
+function renderPrefectLogs() {
+    const list = document.getElementById('prefect-logs-list');
+    if(!list) return;
+    let logs = JSON.parse(localStorage.getItem('jass_prefect_logs')) || [{ location: "Assembly Ground Entrance", status: "Orderly & Quiet" }];
+    list.innerHTML = logs.map(l => `<li>📝 <span>${l.location}</span>: <strong>${l.status}</strong></li>`).join('');
+}
+function publishNotice() {
+    const text = document.getElementById('admin-notice-input').value;
+    if(!text.trim()) return;
+    localStorage.setItem('jass_global_notice', text);
+    document.getElementById('admin-notice-input').value = "";
+    writeLog(localStorage.getItem('jass_current_user'), "Admin", `Broadcasted notice message update.`);
+    loadGlobalNotice();
+}
+function publishPrincipalNotice() {
+    const text = document.getElementById('principal-notice-input').value;
+    if(!text.trim()) return;
+    localStorage.setItem('jass_global_notice', "Executive Order: " + text);
+    document.getElementById('principal-notice-input').value = "";
+    writeLog(localStorage.getItem('jass_current_user'), "Principal", `Issued Executive Order parameter payload.`);
+    loadGlobalNotice();
+}
+function loadGlobalNotice() {
+    const notice = localStorage.getItem('jass_global_notice');
+    if(notice && document.getElementById('notice-text')) document.getElementById('notice-text').innerText = notice;
+}
+function submitAssignment() {
+    const t = document.getElementById('assignment-title');
+    if(!t.value.trim()) return;
+    let arr = JSON.parse(localStorage.getItem('jass_assignments')) || [];
+    arr.push(t.value.trim());
+    localStorage.setItem('jass_assignments', JSON.stringify(arr));
+    writeLog(localStorage.getItem('jass_current_user'), "Student", `Submitted task file: ${t.value.trim()}`);
+    t.value = "";
+    renderAssignments();
+}
+function renderAssignments() {
+    const list = document.getElementById('student-assignment-list');
+    if(!list) return;
+    let arr = JSON.parse(localStorage.getItem('jass_assignments')) || ["Physics Lab Report"];
+    list.innerHTML = arr.map(x => `<li>✅ ${x} <span class="badge">Submitted</span></li>`).join('');
+}
+function registerApplicant() {
+    const n = document.getElementById('applicant-name');
+    if(!n.value.trim()) return;
+    let arr = JSON.parse(localStorage.getItem('jass_apps')) || [];
+    arr.push({name: n.value.trim(), grade: "Senior One"});
+    localStorage.setItem('jass_apps', JSON.stringify(arr));
+    writeLog(localStorage.getItem('jass_current_user'), "Admissions", `Registered applicant ${n.value.trim()}`);
+    n.value = "";
+    renderApplications();
+}
+function renderApplications() {
+    const list = document.getElementById('applications-list');
+    if(!list) return;
+    let arr = JSON.parse(localStorage.getItem('jass_apps')) || [{name:"James Deng", grade:"Senior One"}];
+    list.innerHTML = arr.map(a => `<li>👤 ${a.name} <strong>(${a.grade})</strong></li>`).join('');
+}
+function saveAttendance(e) { e.preventDefault(); localStorage.setItem('jass_attendance_saved', 'true'); document.getElementById('attendance-status').innerText = "✓ Attendance submitted."; writeLog(localStorage.getItem('jass_current_user'), "Teacher", "Submitted daily roster parameters."); }
+function checkAttendanceStatus() { if(localStorage.getItem('jass_attendance_saved') === 'true' && document.getElementById('attendance-status')) document.getElementById('attendance-status').innerText = "✓ Attendance submitted."; }
+</script>
+</body>
+</html>

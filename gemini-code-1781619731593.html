@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>JASS Portal Dashboard</title>
+</head>
+<body>
+
+<section id="login-screen" class="container">
+    <header class="login-header">
+        <img src="assets/school_banner.jpg" alt="JASS Banner">
+        <h1>JASS School Portal</h1>
+        <p>Select your school role to access the portal demo</p>
+    </header>
+    
+    <div class="roles-grid">
+        <div class="card" onclick="loginAs('Student')">
+            <span class="icon">🎓</span>
+            <h3>Student Panel</h3>
+            <p>Assignments, results, and student notices.</p>
+        </div>
+        <div class="card" onclick="loginAs('Teacher')">
+            <span class="icon">👨🏽‍🏫</span>
+            <h3>Teacher Panel</h3>
+            <p>Upload student notes and track attendance.</p>
+        </div>
+        <div class="card" onclick="loginAs('Parent')">
+            <span class="icon">👨🏽‍👩🏽‍👧🏽</span>
+            <h3>Parent Panel</h3>
+            <p>Monitor academic progress and announcements.</p>
+        </div>
+        <div class="card" onclick="loginAs('Admin')">
+            <span class="icon">🛠️</span>
+            <h3>Admin Panel</h3>
+            <p>Manage system admissions and school data.</p>
+        </div>
+        <div class="card" onclick="loginAs('Principal')">
+            <span class="icon">🏫</span>
+            <h3>Principal Panel</h3>
+            <p>Review school-wide reports and approvals.</p>
+        </div>
+        <div class="card" onclick="loginAs('Admissions')">
+            <span class="icon">📝</span>
+            <h3>Admissions Panel</h3>
+            <p>Process applications and new student enrollment.</p>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-screen" class="app-layout hidden">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/school_banner.jpg" alt="Logo">
+            <div>
+                <h3>JASS Portal</h3>
+                <span id="role-badge">Role</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active">🏠 Dashboard</a>
+            <a href="#" class="menu-item">👤 Profile Details</a>
+            <a href="#" class="menu-item">📅 Timetable / Logs</a>
+            <a href="#" class="menu-item">⚙️ Settings</a>
+        </nav>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h2 id="welcome-message">Welcome Back</h2>
+            <div class="system-status">● System Online</div>
+        </header>
+
+        <div id="global-noticeboard" class="notice-banner hidden">
+            <h4>📢 Official School Notice</h4>
+            <p id="notice-text">No active announcements at this time.</p>
+        </div>
+
+        <div id="panel-Student" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📚 Submit Assignment</h4>
+                    <input type="text" id="assignment-title" placeholder="e.g., Physics Lab Report">
+                    <button class="action-btn" onclick="submitAssignment()">Submit Work</button>
+                    <ul id="student-assignment-list" class="data-list"></ul>
+                </div>
+                <div class="panel-card"><h4>📊 Performance Tracker</h4><p>Chemistry Midterm: <strong>85%</strong></p><p>English Essay: <strong>A</strong></p></div>
+            </div>
+        </div>
+
+        <div id="panel-Teacher" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📅 Today's Attendance (Senior 1 Alpha)</h4>
+                    <form onsubmit="saveAttendance(event)">
+                        <label><input type="checkbox" id="student1"> Deng Emmanuel</label>
+                        <label><input type="checkbox" id="student2"> Kiden Mary</label>
+                        <button type="submit" class="action-btn">Submit Attendance</button>
+                    </form>
+                    <p id="attendance-status" class="success-text"></p>
+                </div>
+                <div class="panel-card"><h4>📝 Grading Queue</h4><p>Senior 3 Geography Papers (14 pending)</p></div>
+            </div>
+        </div>
+
+        <div id="panel-Parent" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card"><h4>📈 Academic Report</h4><p>Term 1 Progress: <strong>Excellent</strong></p></div>
+                <div class="panel-card"><h4>💳 School Fees Balance</h4><p>Term 1 Balance: <strong>Fully Paid</strong></p></div>
+            </div>
+        </div>
+
+        <div id="panel-Admin" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📢 Broadcast New School Notice</h4>
+                    <textarea id="admin-notice-input" placeholder="Type an announcement for students and parents..."></textarea>
+                    <button class="action-btn" onclick="publishNotice()">Publish Notice</button>
+                </div>
+                <div class="panel-card"><h4>🗄️ Database Tools</h4><p>System Cloud Backups: <strong>100% Secure</strong></p></div>
+            </div>
+        </div>
+
+        <div id="panel-Principal" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📢 Executive Broadcast</h4>
+                    <textarea id="principal-notice-input" placeholder="Type an official executive statement..."></textarea>
+                    <button class="action-btn" onclick="publishPrincipalNotice()">Publish Executive Order</button>
+                </div>
+                <div class="panel-card"><h4>📈 Enrollment Statistics</h4><p>Total Active Students: <strong>450</strong></p></div>
+            </div>
+        </div>
+
+        <div id="panel-Admissions" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📂 Process New Application</h4>
+                    <input type="text" id="applicant-name" placeholder="Applicant Full Name">
+                    <select id="applicant-class">
+                        <option value="Senior One">Senior One</option>
+                        <option value="Senior Two">Senior Two</option>
+                        <option value="Senior Three">Senior Three</option>
+                        <option value="Senior Four">Senior Four</option>
+                    </select>
+                    <button class="action-btn" onclick="registerApplicant()">Register Student</button>
+                </div>
+                <div class="panel-card">
+                    <h4>🏫 Active Applications Tracker</h4>
+                    <ul id="applications-list" class="data-list"></ul>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    renderAssignments();
+    renderApplications();
+    checkAttendanceStatus();
+    loadGlobalNotice();
+});
+
+function loginAs(role) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').classList.remove('app-layout-flex');
+    document.getElementById('dashboard-screen').classList.add('app-layout-flex'); 
+    
+    document.getElementById('welcome-message').innerText = role + " Core Dashboard";
+    document.getElementById('role-badge').innerText = role;
+
+    // Toggle global noticeboard visibility (Show only for Students and Parents)
+    const noticeboard = document.getElementById('global-noticeboard');
+    if(role === 'Student' || role === 'Parent') {
+        noticeboard.classList.remove('hidden');
+    } else {
+        noticeboard.classList.add('hidden');
+    }
+    
+    const panels = document.querySelectorAll('.role-panel');
+    panels.forEach(panel => panel.classList.add('hidden'));
+    document.getElementById('panel-' + role).classList.remove('hidden');
+}
+
+function logout() {
+    document.getElementById('dashboard-screen').classList.remove('app-layout-flex');
+    document.getElementById('dashboard-screen').classList.add('hidden');
+    document.getElementById('login-screen').classList.remove('hidden');
+}
+
+/* --- CROSS-PANEL FEATURE: NOTICEBOARD SYSTEM --- */
+function publishNotice() {
+    const text = document.getElementById('admin-notice-input').value;
+    if(!text.trim()) return alert("Message cannot be empty.");
+    localStorage.setItem('jass_global_notice', text);
+    document.getElementById('admin-notice-input').value = "";
+    alert("Notice sent to all Students and Parents!");
+    loadGlobalNotice();
+}
+
+function publishPrincipalNotice() {
+    const text = document.getElementById('principal-notice-input').value;
+    if(!text.trim()) return alert("Message cannot be empty.");
+    localStorage.setItem('jass_global_notice', "Executive Order: " + text);
+    document.getElementById('principal-notice-input').value = "";
+    alert("Executive Notice broadcasted!");
+    loadGlobalNotice();
+}
+
+function loadGlobalNotice() {
+    const activeNotice = localStorage.getItem('jass_global_notice');
+    if(activeNotice) {
+        document.getElementById('notice-text').innerText = activeNotice;
+    }
+}
+
+/* --- STUDENT ASSIGNMENTS --- */
+function submitAssignment() {
+    const titleInput = document.getElementById('assignment-title');
+    if (!titleInput.value.trim()) return alert("Enter assignment name.");
+    let assignments = JSON.parse(localStorage.getItem('jass_assignments')) || [];
+    assignments.push(titleInput.value.trim());
+    localStorage.setItem('jass_assignments', JSON.stringify(assignments));
+    titleInput.value = "";
+    renderAssignments();
+}
+function renderAssignments() {
+    const list = document.getElementById('student-assignment-list');
+    let assignments = JSON.parse(localStorage.getItem('jass_assignments')) || ["Physics Lab Report"];
+    list.innerHTML = assignments.map(task => `<li>✅ ${task} <span class="badge">Submitted</span></li>`).join('');
+}
+
+/* --- TEACHER ATTENDANCE --- */
+function saveAttendance(event) {
+    event.preventDefault();
+    localStorage.setItem('jass_attendance_saved', 'true');
+    checkAttendanceStatus();
+}
+function checkAttendanceStatus() {
+    if (localStorage.getItem('jass_attendance_saved') === 'true') {
+        document.getElementById('attendance-status').innerText = "✓ Attendance submitted to administration.";
+    }
+}
+
+/* --- ADMISSIONS --- */
+function registerApplicant() {
+    const nameInput = document.getElementById('applicant-name');
+    const classInput = document.getElementById('applicant-class');
+    if (!nameInput.value.trim()) return alert("Enter applicant name.");
+    let apps = JSON.parse(localStorage.getItem('jass_apps')) || [];
+    apps.push({ name: nameInput.value.trim(), grade: classInput.value });
+    localStorage.setItem('jass_apps', JSON.stringify(apps));
+    nameInput.value = "";
+    renderApplications();
+}
+function renderApplications() {
+    const list = document.getElementById('applications-list');
+    let apps = JSON.parse(localStorage.getItem('jass_apps')) || [{name: "James Deng", grade: "Senior One"}];
+    list.innerHTML = apps.map(app => `<li>👤 ${app.name} <strong>(${app.grade})</strong></li>`).join('');
+}
+</script>
+</body>
+</html>

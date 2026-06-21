@@ -1,0 +1,36 @@
+<li>💰 Accountant: <code>jass.accountant</code></li>
+
+<div id="panel-Accountant" class="role-panel hidden">
+    <div class="panel-grid">
+        <div class="panel-card relative">
+            <div class="card-header-flex">
+                <h4>🧾 Issue Term Tuition Invoice</h4>
+                <button class="add-circle-btn" onclick="toggleCreatorElement('bursar-invoice-box')" title="Create Invoice">+</button>
+            </div>
+            <div id="bursar-invoice-box" class="creator-slide-box hidden">
+                <label for="invoice-student">Target Student Profile</label>
+                <select id="invoice-student">
+                    <option value="Abraham Deng">Abraham Deng (S3 Alpha)</option>
+                </select>
+                <label for="invoice-amount">Tuition Amount Due ($)</label>
+                <input type="number" id="invoice-amount" placeholder="e.g., 450">
+                <button class="action-btn" onclick="generateInvoiceTicket()">Post Invoice to Ledger</button>
+            </div>
+            <p style="font-size:13px; color:#475569;">Post formal financial demands against student accounts. Unpaid balances flag accounts automatically.</p>
+        </div>
+
+        <div class="panel-card">
+            <h4>📊 Student Tuition Clearance Controller</h4>
+            <div class="financial-row">
+                <div class="student-profile-info">
+                    <strong>Student:</strong> Abraham Deng <br>
+                    <strong>Current Balance:</strong> <span id="accountant-view-balance">$0.00</span>
+                </div>
+                <div class="action-group" style="display:flex; gap:8px; margin-top:10px;">
+                    <button class="approve-btn" style="background:#16a34a" onclick="setStudentFinancialState('Cleared')">Mark Fully Cleared</button>
+                    <button class="reject-btn" style="background:#dc2626" onclick="setStudentFinancialState('Arrears Overdue')">Flag Arrears Default</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

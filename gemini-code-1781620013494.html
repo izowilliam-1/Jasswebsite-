@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>JASS Portal Dashboard</title>
+</head>
+<body>
+
+<section id="login-screen" class="container">
+    <header class="login-header">
+        <img src="assets/school_banner.jpg" alt="JASS Banner">
+        <h1>JASS Secure Portal Login</h1>
+        <p>Enter your credentials to access your portal account</p>
+    </header>
+    
+    <div class="login-form-card">
+        <div id="login-error" class="error-banner hidden">❌ Invalid Username or Password. Try again!</div>
+        
+        <label for="username">Username / ID Number</label>
+        <input type="text" id="username" placeholder="e.g., jass.student, jass.clubs, jass.prefect">
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••">
+        
+        <button class="action-btn" onclick="authenticateUser()">Secure Sign In</button>
+        
+        <div class="demo-credentials">
+            <strong>🔑 Expanded Demo Account Hints (Password is 'jasspass'):</strong>
+            <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding-left: 15px;">
+                <li>Student: <code>jass.student</code></li>
+                <li>Teacher: <code>jass.teacher</code></li>
+                <li>Admin: <code>jass.admin</code></li>
+                <li>Principal: <code>jass.principal</code></li>
+                <li>Parent: <code>jass.parent</code></li>
+                <li>Admissions: <code>jass.admissions</code></li>
+                <li>🧬 Clubs: <code>jass.clubs</code></li>
+                <li>🎖️ Prefect: <code>jass.prefect</code></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-screen" class="app-layout hidden">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/school_banner.jpg" alt="Logo">
+            <div>
+                <h3>JASS Portal</h3>
+                <span id="role-badge">Role</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active">🏠 Dashboard</a>
+            <a href="#" class="menu-item">👤 Profile & ID</a>
+            <a href="#" class="menu-item">📅 Timetable / Logs</a>
+            <a href="#" class="menu-item">⚙️ Settings</a>
+        </nav>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h2 id="welcome-message">Welcome Back</h2>
+            <div class="system-status">● Account Secured</div>
+        </header>
+
+        <div id="global-noticeboard" class="notice-banner hidden">
+            <h4>📢 Official School Notice</h4>
+            <p id="notice-text">No active announcements at this time.</p>
+        </div>
+
+        <div id="panel-Student" class="role-panel hidden">
+            <div class="analytics-row">
+                <div class="id-card-badge">
+                    <div class="id-card-header">JASS STUDENT ID</div>
+                    <div class="id-card-body">
+                        <div class="id-avatar">🎓</div>
+                        <div class="id-details">
+                            <h4>Deng Abraham</h4>
+                            <p><strong>ID Number:</strong> JASS-2026-0489</p>
+                            <p><strong>Class:</strong> Senior 3 Alpha</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-grid" style="margin-top:15px;">
+                <div class="panel-card">
+                    <h4>📚 Submit Assignment</h4>
+                    <input type="text" id="assignment-title" placeholder="e.g., Physics Lab Report">
+                    <button class="action-btn" onclick="submitAssignment()">Submit Work</button>
+                    <ul id="student-assignment-list" class="data-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-Teacher" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📅 Today's Attendance (Senior 1 Alpha)</h4>
+                    <form onsubmit="saveAttendance(event)">
+                        <label><input type="checkbox" id="student1"> Deng Emmanuel</label>
+                        <button type="submit" class="action-btn">Submit Attendance</button>
+                    </form>
+                    <p id="attendance-status" class="success-text"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-Parent" class="role-panel hidden">
+            <div class="panel-card"><h4>📈 Academic Report</h4><p>Term 1 Progress: <strong>Excellent</strong></p></div>
+        </div>
+
+        <div id="panel-Admin" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📢 Broadcast New School Notice</h4>
+                    <textarea id="admin-notice-input" placeholder="Type an announcement..."></textarea>
+                    <button class="action-btn" onclick="publishNotice()">Publish Notice</button>
+                </div>
+                <div class="panel-card log-panel-container">
+                    <div class="log-panel-header"><h4>🛡️ Live Portal Audit Logs</h4></div>
+                    <div id="system-log-terminal" class="log-terminal"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-Principal" class="role-panel hidden">
+            <div class="panel-card"><h4>📢 Executive Broadcast</h4><textarea id="principal-notice-input" placeholder="Type an official statement..."></textarea><button class="action-btn" onclick="publishPrincipalNotice()">Publish Executive Order</button></div>
+        </div>
+
+        <div id="panel-Admissions" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>📂 Process New Application</h4>
+                    <input type="text" id="applicant-name" placeholder="Applicant Name"><button class="action-btn" onclick="registerApplicant()">Register Student</button>
+                </div>
+                <div class="panel-card"><h4>🏫 Active Applications Tracker</h4><ul id="applications-list" class="data-list"></ul></div>
+            </div>
+        </div>
+
+        <div id="panel-Clubs" class="role-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card">
+                    <h4>🧬 Register Dynamic School Club</h4>
+                    <input type="text" id="club-name" placeholder="e.g., JASS Science Club, Debate Society">
+                    <label for="club-day">Weekly Meeting Day</label>
+                    <select id="club-day">
+                        <option value="Wednesday">Wednesday Afternoon</option>
+                        <option value="Friday">Friday Afternoon</option>
+                    </select>
+                    <button class="action-btn" onclick="createNewClub()">Register Club</button>
+                </div>
+                <div class="panel-card">
+                    <h4>🏫 Active School Clubs Directory</h4>
+                    <ul id="clubs-list" class="data-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="panel-Prefects" class="role-panel hidden">
+            <div class="analytics-row">
+                <div class="metric-card">
+                    <h5>Prefect Jurisdiction</h5>
+                    <span class="metric-val" style="color:#0f3f8c;">Sanitation & Assembly Operations</span>
+                </div>
+            </div>
+            <div class="panel-grid" style="margin-top:15px;">
+                <div class="panel-card">
+                    <h4>🎖️ Record Assembly / Yard Duty Log</h4>
+                    <input type="text" id="duty-location" placeholder="e.g., Main Hall Assembly, West Block Corridor">
+                    <select id="duty-status">
+                        <option value="Orderly & Quiet">Orderly & Quiet</option>
+                        <option value="Minor Disruption Reported">Minor Disruption Reported</option>
+                    </select>
+                    <button class="action-btn" onclick="submitDutyLog()">Submit Duty Report

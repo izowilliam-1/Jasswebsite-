@@ -1,0 +1,662 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<title>JASS Multi-Panel Portal Pro Enterprise Plus</title>
+</head>
+<body>
+
+<section id="login-screen" class="container">
+    <header class="login-header">
+        <img src="assets/school_banner.jpg" alt="JASS Banner">
+        <h1>JASS Secure Portal Login</h1>
+        <p>Enter your credentials to access your portal account</p>
+    </header>
+    
+    <div class="login-form-card">
+        <div id="login-error" class="error-banner hidden">❌ Invalid Username or Password. Try again!</div>
+        
+        <label for="username">Username / ID Number</label>
+        <input type="text" id="username" placeholder="e.g., jass.student, jass.clubs, jass.prefect">
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••">
+        
+        <button class="action-btn" onclick="authenticateUser()">Secure Sign In</button>
+        
+        <div class="demo-credentials">
+            <strong>🔑 Access Credentials (Password is 'jasspass'):</strong>
+            <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding-left: 15px;">
+                <li>Student: <code>jass.student</code></li>
+                <li>Teacher: <code>jass.teacher</code></li>
+                <li>Admin: <code>jass.admin</code></li>
+                <li>Principal: <code>jass.principal</code></li>
+                <li>Parent: <code>jass.parent</code></li>
+                <li>Admissions: <code>jass.admissions</code></li>
+                <li>🧬 Clubs: <code>jass.clubs</code></li>
+                <li>🎖️ Prefect: <code>jass.prefect</code></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="dashboard-screen" class="app-layout hidden">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="assets/school_banner.jpg" alt="Logo">
+            <div>
+                <h3>JASS Portal</h3>
+                <span id="role-badge">Role</span>
+            </div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="#" id="menu-home" class="menu-item active" onclick="switchMainPanel('home')">🏠 Core Dashboard</a>
+            <a href="#" id="menu-logs" class="menu-item" onclick="switchMainPanel('logs')">📋 System Logs Ledger</a>
+            <a href="#" id="menu-clubs" class="menu-item" onclick="switchMainPanel('clubs')">🧬 Clubs Directory</a>
+            <a href="#" id="menu-prefects" class="menu-item" onclick="switchMainPanel('prefects')">🎖️ Prefect Control</a>
+        </nav>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h2 id="welcome-message">Dashboard Window</h2>
+            <div class="search-bar-container">
+                <input type="text" id="global-search-input" placeholder="🔍 Live search active directory items..." oninput="filterActiveLists()">
+            </div>
+            <div class="system-status">● Secure Session Active</div>
+        </header>
+
+        <div class="analytics-strip">
+            <div class="strip-card">
+                <span class="strip-label">⭐ Behavior Score (Abraham)</span>
+                <span class="strip-value" id="stat-behavior-score">100</span>
+            </div>
+            <div class="strip-card">
+                <span class="strip-label">🧬 Registered Clubs</span>
+                <span class="strip-value" id="stat-clubs">0</span>
+            </div>
+            <div class="strip-card">
+                <span class="strip-label">📋 Pending Club Apps</span>
+                <span class="strip-value" id="stat-pending-clubs">0</span>
+            </div>
+            <div class="strip-card">
+                <span class="strip-label">💰 Tuition Financial Status</span>
+                <span class="strip-value" id="stat-financial">Cleared</span>
+            </div>
+        </div>
+
+        <div id="global-noticeboard" class="notice-banner hidden">
+            <h4>📢 Official School Notice</h4>
+            <p id="notice-text">No active announcements at this time.</p>
+        </div>
+
+        <div id="subview-home" class="subview-panel">
+            
+            <div id="panel-Student" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>📚 Dynamic Assignment Sandbox</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('student-add-box')" title="Add Assignment">+</button>
+                        </div>
+                        <div id="student-add-box" class="creator-slide-box hidden">
+                            <input type="text" id="assignment-title" placeholder="Enter assignment name (e.g., Biology Lab)">
+                            <button class="action-btn" onclick="submitAssignment()">Upload File Instance</button>
+                        </div>
+                        <ul id="student-assignment-list" class="data-list searchable-list"></ul>
+                    </div>
+
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>🧬 Online Club Joining Request</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('student-club-box')" title="Join Club">+</button>
+                        </div>
+                        <div id="student-club-box" class="creator-slide-box hidden">
+                            <div id="verification-engine-alert" class="rule-status-alert alert-neutral">
+                                ⚙️ Initializing eligibility scanner...
+                            </div>
+
+                            <label for="student-club-select">Select Club Target</label>
+                            <select id="student-club-select">
+                                <option value="Mathematics Elite Alliance">Mathematics Elite Alliance</option>
+                                <option value="Debate Society & Public Speaking">Debate Society & Public Speaking</option>
+                                <option value="SDA Youth Choir">SDA Youth Choir</option>
+                            </select>
+
+                            <button id="submit-club-app-btn" class="action-btn" style="margin-top:10px;" onclick="submitClubApplication()">Submit Digital Request</button>
+                        </div>
+                        <p style="font-size:13px; color:#64748b; margin-bottom: 10px;">Automated Rule Engine verifies grades, live conduct point standing, and financial balances before allowing sign-up.</p>
+                        <ul id="my-club-applications" class="data-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Teacher" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>📅 Classroom Attendance Registry</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('teacher-add-box')" title="Mark Attendance">+</button>
+                        </div>
+                        <div id="teacher-add-box" class="creator-slide-box hidden">
+                            <form onsubmit="saveAttendance(event)">
+                                <label><input type="checkbox" id="student1"> Deng Emmanuel (S3 Alpha)</label>
+                                <label style="margin-top:8px;"><input type="checkbox" id="student2"> Kiden Mary (S3 Alpha)</label>
+                                <button type="submit" class="action-btn" style="margin-top:12px;">Submit Daily Ledger</button>
+                            </form>
+                        </div>
+                        <p id="attendance-status" class="success-text"></p>
+                    </div>
+
+                    <div class="panel-card">
+                        <h4>🎓 Academic Eligibility Marks Control</h4>
+                        <label for="grade-student-select">Select Student</label>
+                        <select id="grade-student-select">
+                            <option value="Abraham Deng">Abraham Deng (S3)</option>
+                        </select>
+                        <label for="grade-value-select">Academic Standing Performance</label>
+                        <select id="grade-value-select" onchange="updateAcademicDatabaseStanding()">
+                            <option value="Excellent">Excellent Performance (A)</option>
+                            <option value="Poor">Poor Performance (F - Blocks Club Joining)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Parent" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>📈 Academic Progress & Profile</h4>
+                        </div>
+                        <p>Academic Standing Profile: <strong id="parent-view-grade">Excellent</strong></p>
+                        <p>Behavior Score: <strong id="parent-view-behavior">100 Pts</strong></p>
+                    </div>
+
+                    <div class="panel-card">
+                        <h4>💰 Tuition Fee Management Ledger</h4>
+                        <p>Current Status: <span id="parent-fee-status-badge" class="badge">Checking...</span></p>
+                        
+                        <div id="bursar-pay-container" class="hidden">
+                            <p style="font-size:13px; color:#c62828;">⚠️ <strong>Warning:</strong> Club registration utilities are blocked for your student until tuition clearance is achieved.</p>
+                            <button class="action-btn" style="background:#2e7d32" onclick="simulateFeePayment()">Pay Arrears via Mobile Money</button>
+                        </div>
+                        <div id="bursar-cleared-container" class="hidden">
+                            <p style="font-size:13px; color:#2e7d32;">✅ Your financial account is fully cleared for this academic term block.</p>
+                            <button class="action-btn" style="background:#475569" onclick="simulateFeeDefault()">Toggle Default State (Test Block)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Admin" class="role-panel hidden">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>📢 Administrative Notice Transmitter</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('admin-add-box')" title="Draft Notice">+</button>
+                    </div>
+                    <div id="admin-add-box" class="creator-slide-box hidden">
+                        <textarea id="admin-notice-input" placeholder="Type global system notice message..."></textarea>
+                        <button class="action-btn" onclick="publishNotice()">Broadcast Payload to Network</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Principal" class="role-panel hidden">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>📢 Executive Broadcast Orders</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('principal-add-box')" title="Draft Order">+</button>
+                    </div>
+                    <div id="principal-add-box" class="creator-slide-box hidden">
+                        <textarea id="principal-notice-input" placeholder="Type official executive directive statement..."></textarea>
+                        <button class="action-btn" onclick="publishPrincipalNotice()">Sign & Broadcast Executive Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Admissions" class="role-panel hidden">
+                <div class="panel-grid">
+                    <div class="panel-card relative">
+                        <div class="card-header-flex">
+                            <h4>📂 Intake Applications Engine</h4>
+                            <button class="add-circle-btn" onclick="toggleCreatorElement('admissions-add-box')" title="New Applicant">+</button>
+                        </div>
+                        <div id="admissions-add-box" class="creator-slide-box hidden">
+                            <input type="text" id="applicant-name" placeholder="Applicant Full Name">
+                            <button class="action-btn" onclick="registerApplicant()">Record Applicant Entry</button>
+                        </div>
+                    </div>
+                    <div class="panel-card">
+                        <h4>🏫 Application Directory Ledger</h4>
+                        <ul id="applications-list" class="data-list searchable-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panel-Clubs" class="role-panel hidden">
+                <div class="panel-card">
+                    <h3>🧬 Organization Subsystem Workspace</h3>
+                    <p>Navigate to the <strong>Clubs Directory Panel</strong> in the left sidebar configuration matrix to process approvals and requirements screens.</p>
+                </div>
+            </div>
+
+            <div id="panel-Prefects" class="role-panel hidden">
+                <div class="panel-card">
+                    <h3>🎖️ Student Leadership Console</h3>
+                    <p>Navigate to the <strong>Prefect Control Panel</strong> in the left sidebar configuration matrix to execute logs.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="subview-logs" class="subview-panel hidden">
+            <div class="panel-card log-panel-container">
+                <div class="log-panel-header">
+                    <h3>🛡️ System Security Audit Logs Ledger</h3>
+                    <button class="clear-log-btn" onclick="clearSystemLogs()">Clear Log History</button>
+                </div>
+                <div id="system-log-terminal" class="log-terminal searchable-list"></div>
+            </div>
+        </div>
+
+        <div id="subview-clubs" class="subview-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>🧬 Add Master Club Instance</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('clubs-view-add-box')" title="Add Club">+</button>
+                    </div>
+                    <div id="clubs-view-add-box" class="creator-slide-box hidden">
+                        <input type="text" id="club-name" placeholder="e.g., JASS Science Club">
+                        <label for="club-day">Weekly Meeting Day</label>
+                        <select id="club-day">
+                            <option value="Wednesday">Wednesday Afternoon</option>
+                            <option value="Friday">Friday Afternoon</option>
+                        </select>
+                        <button class="action-btn" onclick="createNewClub()">Add Club to System</button>
+                    </div>
+                    <h4>🏫 System Roster Directory</h4>
+                    <ul id="clubs-list" class="data-list searchable-list"></ul>
+                </div>
+                
+                <div class="panel-card">
+                    <h4>📝 Student Online Applications & Requirements Screening</h4>
+                    <p style="font-size:12px; color:#475569; margin-top:-10px;">Verification Engine Enforced: [Performance] + [Behavior Pts > 75] + [Financial Clearance]</p>
+                    <div id="club-screening-container" class="searchable-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="subview-prefects" class="subview-panel hidden">
+            <div class="panel-grid">
+                <div class="panel-card relative">
+                    <div class="card-header-flex">
+                        <h4>🎖️ Conduct Register: Issue Merits & Demerits</h4>
+                        <button class="add-circle-btn" onclick="toggleCreatorElement('prefects-view-add-box')" title="Issue Ticket">+</button>
+                    </div>
+                    <div id="prefects-view-add-box" class="creator-slide-box hidden">
+                        <label for="prefect-target-student">Target Student Profile</label>
+                        <select id="prefect-target-student">
+                            <option value="Abraham Deng">Abraham Deng (S3)</option>
+                        </select>
+                        
+                        <label for="ticket-type">Action Class Selection</label>
+                        <select id="ticket-type">
+                            <option value="Merit">🏅 Award Merit (+15 Points)</option>
+                            <option value="Demerit">⚠️ Issue Demerit (-30 Points)</option>
+                        </select>
+
+                        <label for="duty-location">Reason / Infraction Category Description</label>
+                        <input type="text" id="duty-location" placeholder="e.g., Classroom Disruption, Good Campus Leadership">
+                        
+                        <button class="action-btn" onclick="submitConductTicket()">Commit Incident Ticket</button>
+                    </div>
+                    <p style="font-size:13px; color:#64748b; margin-top:5px;">Issuing Demerits strips conduct score points away. Dropping below 75 points flags behavioral non-compliance.</p>
+                </div>
+                
+                <div class="panel-card">
+                    <h4>📋 Today's Filed Behavioral Performance Logs</h4>
+                    <ul id="prefect-logs-list" class="data-list searchable-list"></ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</section>
+
+<script>
+let activeSessionRole = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+    initializeMockDatabase();
+    renderAssignments();
+    renderApplications();
+    checkAttendanceStatus();
+    loadGlobalNotice();
+    renderSystemLogs();
+    renderClubs();
+    renderPrefectLogs();
+    renderClubApplications();
+    calculateLiveMetrics();
+});
+
+function initializeMockDatabase() {
+    if (!localStorage.getItem('db_academic_performance')) localStorage.setItem('db_academic_performance', 'Excellent');
+    if (!localStorage.getItem('db_behavioral_score')) localStorage.setItem('db_behavioral_score', '100');
+    if (!localStorage.getItem('db_financial_clearance')) localStorage.setItem('db_financial_clearance', 'Cleared');
+    if (!localStorage.getItem('jass_prefect_logs')) {
+        localStorage.setItem('jass_prefect_logs', JSON.stringify([{reason: "Initial clean profile registration initialization", scoreChange: "+100 Pts Base"}]))
+    }
+}
+
+// ADVANCED ELIGIBILITY RULES VERIFICATION ENGINE
+function runRealTimeVerificationEngine() {
+    const alertBox = document.getElementById('verification-engine-alert');
+    const submitBtn = document.getElementById('submit-club-app-btn');
+    if (!alertBox || !submitBtn) return;
+
+    const academic = localStorage.getItem('db_academic_performance');
+    const behaviorScore = parseInt(localStorage.getItem('db_behavioral_score')) || 100;
+    const financial = localStorage.getItem('db_financial_clearance');
+
+    let failReasons = [];
+    if (academic !== 'Excellent') failReasons.push("Poor Academic Performance Standings");
+    if (behaviorScore < 75) failReasons.push(`Low Behavior Conduct score (${behaviorScore}/100)`);
+    if (financial !== 'Cleared') failReasons.push("Tuition Financial Balance Outstanding");
+
+    if (failReasons.length > 0) {
+        alertBox.className = "rule-status-alert alert-failed";
+        alertBox.innerHTML = `❌ <strong>Club Registration Blocked:</strong> System rules validation failed because of: <strong>${failReasons.join(', ')}</strong>.`;
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.4";
+        submitBtn.style.cursor = "not-allowed";
+    } else {
+        alertBox.className = "rule-status-alert alert-passed";
+        alertBox.innerHTML = `✅ <strong>Eligibility Scanner Clear:</strong> Academic Range (A), Conduct Standing (${behaviorScore} Pts), and Finance Records verified. Access granted.`;
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
+        submitBtn.style.cursor = "pointer";
+    }
+}
+
+// PREFECT CONDUCT TICKET CONTROLLER
+function submitConductTicket() {
+    const student = document.getElementById('prefect-target-student').value;
+    const type = document.getElementById('ticket-type').value;
+    const reason = document.getElementById('duty-location').value.trim();
+    if(!reason) return alert("Please specify the ticket reason details.");
+
+    let currentScore = parseInt(localStorage.getItem('db_behavioral_score')) || 100;
+    let pointDelta = (type === 'Merit') ? 15 : -30;
+    let netScore = Math.max(0, Math.min(100, currentScore + pointDelta));
+    localStorage.setItem('db_behavioral_score', netScore.toString());
+
+    let logs = JSON.parse(localStorage.getItem('jass_prefect_logs')) || [];
+    logs.unshift({
+        reason: `${type} Issued: ${reason} (${student})`,
+        scoreChange: `${pointDelta > 0 ? '+' : ''}${pointDelta} Pts (Net: ${netScore})`
+    });
+    localStorage.setItem('jass_prefect_logs', JSON.stringify(logs));
+    
+    writeLog("Head Prefect Lado", "Prefects", `Committed behavioral ticket [${type.toUpperCase()}] against ${student}. New baseline: ${netScore} points.`);
+    document.getElementById('duty-location').value = "";
+    document.getElementById('prefects-view-add-box').classList.add('hidden');
+    
+    renderPrefectLogs();
+    calculateLiveMetrics();
+}
+
+// BURSAR SIMULATED ROUTINES
+function simulateFeePayment() {
+    localStorage.setItem('db_financial_clearance', 'Cleared');
+    writeLog("Parent Rep", "Parent", "Dispatched tuition mobile payment wire. Account status flipped to CLEARED.");
+    syncFinancialDisplay();
+    calculateLiveMetrics();
+}
+function simulateFeeDefault() {
+    localStorage.setItem('db_financial_clearance', 'Arrears Overdue');
+    writeLog("Parent Rep", "Parent", "Artificially injected financial arrears lapse flag to evaluate system defense gates.");
+    syncFinancialDisplay();
+    calculateLiveMetrics();
+}
+function syncFinancialDisplay() {
+    const status = localStorage.getItem('db_financial_clearance');
+    const badge = document.getElementById('parent-fee-status-badge');
+    if(!badge) return;
+    
+    badge.innerText = status;
+    badge.className = `badge ${status === 'Cleared' ? 'approved-badge' : 'rejected-badge'}`;
+    
+    document.getElementById('bursar-pay-container').classList.toggle('hidden', status === 'Cleared');
+    document.getElementById('bursar-cleared-container').classList.toggle('hidden', status !== 'Cleared');
+}
+
+function updateAcademicDatabaseStanding() {
+    localStorage.setItem('db_academic_performance', document.getElementById('grade-value-select').value);
+    writeLog("Madam Kiden", "Teacher", "Overrode school marks registration arrays.");
+}
+
+function filterActiveLists() {
+    const searchVal = document.getElementById('global-search-input').value.toLowerCase().trim();
+    document.querySelectorAll('.searchable-list').forEach(list => {
+        for (let item of list.children) {
+            item.style.display = item.innerText.toLowerCase().includes(searchVal) ? "" : "none";
+        }
+    });
+}
+
+function calculateLiveMetrics() {
+    let clubs = JSON.parse(localStorage.getItem('jass_clubs')) || [{ name: "Mathematics Elite Alliance", day: "Wednesday" }, { name: "SDA Youth Choir", day: "Friday" }];
+    let clubApps = JSON.parse(localStorage.getItem('jass_club_applications')) || [];
+    let pendingCount = clubApps.filter(a => a.status === 'Pending').length;
+
+    document.getElementById('stat-behavior-score').innerText = `${localStorage.getItem('db_behavioral_score')}/100 Pts`;
+    document.getElementById('stat-clubs').innerText = clubs.length;
+    document.getElementById('stat-pending-clubs').innerText = pendingCount;
+    document.getElementById('stat-financial').innerText = localStorage.getItem('db_financial_clearance');
+}
+
+function submitClubApplication() {
+    const club = document.getElementById('student-club-select').value;
+    const studentName = localStorage.getItem('jass_current_user') || "Abraham Deng";
+    let apps = JSON.parse(localStorage.getItem('jass_club_applications')) || [];
+    
+    if(apps.some(a => a.student === studentName && a.club === club)) return alert("Application already recorded inside data streams.");
+
+    apps.push({
+        id: Date.now(),
+        student: studentName,
+        club: club,
+        status: "Pending",
+        metrics: { 
+            performance: localStorage.getItem('db_academic_performance'), 
+            behavior: `${localStorage.getItem('db_behavioral_score')} Pts`, 
+            english: "Fluent" 
+        }
+    });
+
+    localStorage.setItem('jass_club_applications', JSON.stringify(apps));
+    writeLog(studentName, "Student", `Submitted online registration to join "${club}"`);
+    document.getElementById('student-club-box').classList.add('hidden');
+    renderClubApplications();
+    calculateLiveMetrics();
+}
+
+function renderClubApplications() {
+    let apps = JSON.parse(localStorage.getItem('jass_club_applications')) || [];
+    const studentName = localStorage.getItem('jass_current_user') || "Abraham Deng";
+    
+    const myView = document.getElementById('my-club-applications');
+    if (myView) {
+        let myApps = apps.filter(a => a.student === studentName);
+        myView.innerHTML = myApps.length === 0 ? `<li style="font-style:italic; color:#94a3b8">No club application entries filed.</li>` :
+            myApps.map(a => `<li>🧬 <strong>${a.club}</strong> - Status: <span class="badge ${a.status.toLowerCase()}-badge">${a.status}</span></li>`).join('');
+    }
+
+    const screeningBox = document.getElementById('club-screening-container');
+    if (screeningBox) {
+        if(apps.length === 0) {
+            screeningBox.innerHTML = `<div style="font-style:italic; color:#64748b; padding:10px;">No records found.</div>`;
+            return;
+        }
+        screeningBox.innerHTML = apps.map(a => `
+            <div class="screening-card">
+                <div class="screening-title"><strong>${a.student}</strong> ➔ ${a.club}</div>
+                <div class="screening-metrics">
+                    <span>📚 Grade: <strong>${a.metrics.performance}</strong></span>
+                    <span>🛡️ Points: <strong>${a.metrics.behavior}</strong></span>
+                </div>
+                ${a.status === 'Pending' ? `
+                    <div class="screening-actions">
+                        <button class="approve-btn" onclick="updateAppStatus(${a.id}, 'Approved')">Approve Member</button>
+                        <button class="reject-btn" onclick="updateAppStatus(${a.id}, 'Rejected')">Reject</button>
+                    </div>
+                ` : `<div style="margin-top:10px; font-size:12px;">Resolution Status: <span class="badge ${a.status.toLowerCase()}-badge">${a.status}</span></div>`}
+            </div>
+        `).join('');
+    }
+}
+
+function updateAppStatus(appId, resolution) {
+    let apps = JSON.parse(localStorage.getItem('jass_club_applications')) || [];
+    let appIndex = apps.findIndex(a => a.id === appId);
+    if(appIndex > -1) {
+        apps[appIndex].status = resolution;
+        localStorage.setItem('jass_club_applications', JSON.stringify(apps));
+        renderClubApplications();
+        calculateLiveMetrics();
+    }
+}
+
+function toggleCreatorElement(elementId) {
+    document.getElementById(elementId).classList.toggle('hidden');
+    if (elementId === 'student-club-box') runRealTimeVerificationEngine();
+}
+
+function switchMainPanel(panelName) {
+    document.querySelectorAll('.subview-panel').forEach(view => view.classList.add('hidden'));
+    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+    document.getElementById('subview-' + panelName).classList.remove('hidden');
+    document.getElementById('menu-' + panelName).classList.add('active');
+}
+
+function writeLog(user, role, action) {
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = `<div class="log-entry">[${timestamp}] (${role.toUpperCase()}) <strong>${user}</strong>: ${action}</div>`;
+    let logs = JSON.parse(localStorage.getItem('jass_system_logs_html')) || [];
+    logs.unshift(entry); localStorage.setItem('jass_system_logs_html', JSON.stringify(logs));
+    renderSystemLogs();
+}
+
+function renderSystemLogs() {
+    const logTerminal = document.getElementById('system-log-terminal');
+    if (logTerminal) {
+        let logs = JSON.parse(localStorage.getItem('jass_system_logs_html')) || [];
+        logTerminal.innerHTML = logs.length === 0 ? `<div class="log-entry">Clear history.</div>` : logs.join('');
+    }
+}
+
+function clearSystemLogs() { localStorage.setItem('jass_system_logs_html', JSON.stringify([])); renderSystemLogs(); }
+
+function authenticateUser() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    if (pass === 'jasspass') {
+        if (user === 'jass.student') { loginAs('Student', 'Abraham Deng'); return; }
+        if (user === 'jass.teacher') { loginAs('Teacher', 'Madam Kiden'); return; }
+        if (user === 'jass.parent') { loginAs('Parent', 'Parent Rep'); return; }
+        if (user === 'jass.clubs') { loginAs('Clubs', 'Club Coordinator'); return; }
+        if (user === 'jass.prefect') { loginAs('Prefects', 'Head Prefect Lado'); return; }
+        if (user === 'jass.admin') { loginAs('Admin', 'SysAdmin'); return; }
+        if (user === 'jass.principal') { loginAs('Principal', 'Principal Lodu'); return; }
+        if (user === 'jass.admissions') { loginAs('Admissions', 'Registrar Officer'); return; }
+    }
+    document.getElementById('login-error').classList.remove('hidden');
+}
+
+function loginAs(role, displayUser = "User") {
+    activeSessionRole = role;
+    localStorage.setItem('jass_current_user', displayUser);
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').className = 'app-layout app-layout-flex'; 
+    document.getElementById('role-badge').innerText = role;
+
+    document.getElementById('global-noticeboard').classList.toggle('hidden', !(role === 'Student' || role === 'Parent'));
+    document.querySelectorAll('.role-panel').forEach(panel => panel.classList.add('hidden'));
+    document.getElementById('panel-' + role).classList.remove('hidden');
+    
+    if (role === 'Parent') {
+        document.getElementById('parent-view-grade').innerText = localStorage.getItem('db_academic_performance');
+        document.getElementById('parent-view-behavior').innerText = `${localStorage.getItem('db_behavioral_score')} / 100 Pts`;
+        syncFinancialDisplay();
+    }
+
+    switchMainPanel('home');
+    renderClubApplications();
+    calculateLiveMetrics();
+}
+
+function logout() {
+    document.getElementById('dashboard-screen').className = 'app-layout hidden';
+    document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function createNewClub() {
+    let clubs = JSON.parse(localStorage.getItem('jass_clubs')) || [];
+    clubs.push({ name: document.getElementById('club-name').value.trim(), day: document.getElementById('club-day').value });
+    localStorage.setItem('jass_clubs', JSON.stringify(clubs));
+    document.getElementById('club-name').value = "";
+    document.getElementById('clubs-view-add-box').classList.add('hidden');
+    renderClubs();
+    calculateLiveMetrics();
+}
+
+function renderClubs() {
+    const list = document.getElementById('clubs-list');
+    if(!list) return;
+    let clubs = JSON.parse(localStorage.getItem('jass_clubs')) || [{ name: "Mathematics Elite Alliance", day: "Wednesday" }, { name: "SDA Youth Choir", day: "Friday" }];
+    list.innerHTML = clubs.map(c => `<li>🧬 <strong>${c.name}</strong> - Meets: ${c.day}s <span class="badge">Active</span></li>`).join('');
+}
+
+function renderPrefectLogs() {
+    const list = document.getElementById('prefect-logs-list');
+    if(!list) return;
+    let logs = JSON.parse(localStorage.getItem('jass_prefect_logs')) || [];
+    list.innerHTML = logs.map(l => `<li>📝 <span>${l.reason}</span>: <strong>${l.scoreChange}</strong></li>`).join('');
+}
+
+function publishNotice() { localStorage.setItem('jass_global_notice', document.getElementById('admin-notice-input').value); loadGlobalNotice(); }
+function publishPrincipalNotice() { localStorage.setItem('jass_global_notice', "Executive Order: " + document.getElementById('principal-notice-input').value); loadGlobalNotice(); }
+function loadGlobalNotice() { const notice = localStorage.getItem('jass_global_notice'); if(notice && document.getElementById('notice-text')) document.getElementById('notice-text').innerText = notice; }
+function submitAssignment() {
+    let arr = JSON.parse(localStorage.getItem('jass_assignments')) || [];
+    arr.push(document.getElementById('assignment-title').value.trim());
+    localStorage.setItem('jass_assignments', JSON.stringify(arr));
+    renderAssignments();
+}
+function renderAssignments() {
+    const list = document.getElementById('student-assignment-list');
+    if(!list) return;
+    let arr = JSON.parse(localStorage.getItem('jass_assignments')) || ["Physics Lab Report"];
+    list.innerHTML = arr.map(x => `<li>✅ ${x} <span class="badge">Submitted</span></li>`).join('');
+}
+function registerApplicant() {
+    let arr = JSON.parse(localStorage.getItem('jass_apps')) || [];
+    arr.push({name: document.getElementById('applicant-name').value.trim(), grade: "Senior One"});
+    localStorage.setItem('jass_apps', JSON.stringify(arr));
+    renderApplications();
+}
+function renderApplications() {
+    const list = document.getElementById('applications-list');
+    if(!list) return;
+    let arr = JSON.parse(localStorage.getItem('jass_apps')) || [{name:"James Deng", grade:"Senior One"}];
+    list.innerHTML = arr.map(a => `<li>👤 ${a.name} <strong>(${a.grade})</strong></li>`).join('');
+}
+function saveAttendance(e) { e.preventDefault(); localStorage.setItem('jass_attendance_saved', 'true'); }
+function checkAttendanceStatus() { if(localStorage.getItem('jass_attendance_saved') === 'true' && document.getElementById('attendance-status')) document.getElementById('attendance-status').innerText = "✓ Attendance submitted."; }
+</script>
+</body>
+</html>
