@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact | Juba Seventh-Day Adventist Secondary School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><img src="assets/jass_logo.png" alt="JASS crest"></div>
+      <div class="brand-text">
+        <h1>Juba Seventh-Day Adventist Secondary School</h1>
+        <p class="motto">Wholistic Education for a Brighter Future</p>
+      </div>
+    </div>
+    <nav class="main-nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="admissions.html">Admissions</a>
+      <a href="teachers.html">Teachers</a>
+      <a href="news.html">News</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="faq.html">FAQ</a>
+      <a href="results.html">Results</a>
+      <a href="portal.html">Staff Portal</a>
+      <a href="contact.html" aria-current="page">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow" style="color:#D9A621;">Contact</p>
+    <h2>Get in Touch</h2>
+    <p class="sub">We'd love to hear from you</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="grid">
+      <div class="card accent-gold">
+        <h3>📍 Location</h3>
+        <p><small id="c-address">Loading…</small></p>
+      </div>
+      <div class="card accent-clay">
+        <h3>📞 Phone</h3>
+        <p><small id="c-phone">Loading…</small></p>
+      </div>
+      <div class="card accent-sage">
+        <h3>✉️ Email</h3>
+        <p><small id="c-email">Loading…</small></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width:700px;">
+    <div class="section-head">
+      <p class="eyebrow">Fee Payments</p>
+      <h2>Where to Pay</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="card">
+      <p>School fees can be paid through the following banks:</p>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));margin-top:14px;">
+        <div class="card accent-gold" style="box-shadow:none;"><h4 id="c-bank1" style="margin:0;">🏦 Loading…</h4></div>
+        <div class="card accent-clay" style="box-shadow:none;"><h4 id="c-bank2" style="margin:0;">🏦 Loading…</h4></div>
+      </div>
+      <p style="margin-top:16px;"><small><strong>Account details are not published here for security.</strong> Please confirm the correct account name and number in person or by phone with the Bursar's office before making any payment. After paying, bring your receipt to the Bursar's office for confirmation.</small></p>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--paper-dim);">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Send a Message</p>
+      <h2 id="c-hours">Office Hours: Loading…</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="card" style="max-width:520px;margin:0 auto;">
+      <div class="demo-banner"><strong>Demo only</strong> — this form is not yet connected to email.</div>
+      <label for="cname">Your Name</label>
+      <input type="text" id="cname" placeholder="Full name">
+      <label for="cemail">Your Email</label>
+      <input type="email" id="cemail" placeholder="you@example.com">
+      <label for="cmsg">Message</label>
+      <textarea id="cmsg" rows="4" placeholder="How can we help?"></textarea>
+      <button class="btn btn-indigo btn-block" style="margin-top:18px;" onclick="alert('This is a demo form. Please call or visit the school office to reach us directly.')">Send Message</button>
+    </div>
+  </div>
+</section>
+
+<div class="ad-slot">
+  <div class="ad-slot-inner">
+    <span class="ad-label">Advertisement Placeholder</span>
+    Ad space reserved for future Google AdSense — not active. Requires a live domain and approved AdSense account.
+  </div>
+</div>
+
+<footer class="site-footer">
+  <h3>Juba Seventh-Day Adventist Secondary School</h3>
+  <p>Munuki SDA Roundabout, Juba, South Sudan</p>
+  <div class="foot-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="admissions.html">Admissions</a>
+    <a href="news.html">News</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <p class="fine">&copy; 2026 JASS. Student project website — for demonstration purposes.</p>
+</footer>
+
+<script>
+  // Loads live contact details from _data/contact.json.
+  // This file is edited by staff through /admin (Decap CMS with real login)
+  // and committed back to the repo, so this page always reflects the latest save.
+  fetch('_data/contact.json')
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('c-address').innerHTML =
+        `${d.address_line1}<br>${d.address_line2}<br>${d.address_line3}`;
+      document.getElementById('c-phone').innerHTML =
+        `<a href="tel:${d.phone_1_tel}">${d.phone_1}</a><br><a href="tel:${d.phone_2_tel}">${d.phone_2}</a>`;
+      document.getElementById('c-email').innerHTML =
+        `<a href="mailto:${d.email}">${d.email}</a>`;
+      document.getElementById('c-bank1').textContent = `🏦 ${d.bank_1}`;
+      document.getElementById('c-bank2').textContent = `🏦 ${d.bank_2}`;
+      document.getElementById('c-hours').textContent = `Office Hours: ${d.office_hours}`;
+    })
+    .catch(() => {
+      document.getElementById('c-address').textContent = 'Contact details unavailable — please check back later.';
+    });
+</script>
+
+</body>
+</html>
