@@ -3,19 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Staff Portal | Juba Adventist Secondary School</title>
+<title>Staff Portal | Juba Seventh-Day Adventist Secondary School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
 
 <header class="site-header">
   <div class="topbar">
     <div class="brand">
-      <div class="brand-mark">JASS</div>
+      <div class="brand-mark"><img src="assets/jass_logo.png" alt="JASS crest"></div>
       <div class="brand-text">
-        <h1>Juba Adventist Secondary School</h1>
+        <h1>Juba Seventh-Day Adventist Secondary School</h1>
         <p class="motto">Wholistic Education for a Brighter Future</p>
       </div>
     </div>
@@ -26,6 +27,7 @@
       <a href="teachers.html">Teachers</a>
       <a href="news.html">News</a>
       <a href="gallery.html">Gallery</a>
+      <a href="faq.html">FAQ</a>
       <a href="results.html">Results</a>
       <a href="portal.html" aria-current="page">Staff Portal</a>
       <a href="contact.html">Contact</a>
@@ -36,61 +38,34 @@
 <section class="hero">
   <div class="wrap">
     <p class="eyebrow" style="color:#D9A621;">Staff Portal</p>
-    <h2>Staff Command Center</h2>
-    <p class="sub">A mock-up of an internal staff dashboard</p>
+    <h2>Staff Content Manager</h2>
+    <p class="sub">Real login, for editing live site content</p>
   </div>
 </section>
 
 <section class="section">
-  <div class="wrap" style="max-width:760px;">
-
-    <div class="demo-banner">
-      <strong>Demo Mode</strong> — this page is a front-end mock-up built for a class project. There is no real account
-      system, no real files are uploaded anywhere, and the "access code" below is visible in the page source.
-      It does not protect anything and should never be used to store real school or student data.
+  <div class="wrap" style="max-width:600px;">
+    <div class="card" style="text-align:center;">
+      <h3>🔒 Staff Login</h3>
+      <p>Authorized staff can sign in to edit the school's contact details, news posts and staff directory directly. Changes here update the live website.</p>
+      <a href="/admin/" class="btn btn-indigo btn-block" style="margin-top:14px;">Open Content Manager</a>
+      <p style="margin-top:18px;"><small>Access is managed through Netlify Identity. Staff must be invited by a site administrator before they can log in — this is not a public sign-up.</small></p>
     </div>
-
-    <div id="login-form" class="card" style="max-width:440px;margin:0 auto;text-align:center;">
-      <h3>🔒 Demo Portal Access</h3>
-      <p><small>Enter the demo code to preview the mock dashboard.</small></p>
-      <label for="staffKey" style="text-align:left;">Demo Access Code</label>
-      <input type="password" id="staffKey" placeholder="Hint: JASS2026">
-      <button onclick="authorize()" class="btn btn-indigo btn-block" style="margin-top:14px;">View Demo Dashboard</button>
+    <div class="demo-banner" style="margin-top:20px;">
+      <strong>Setup note:</strong> this login only works once the site is deployed on Netlify with Identity and Git Gateway enabled, and staff accounts have been invited. See the included <code>SETUP.md</code> for the one-time setup steps.
     </div>
-
-    <div id="admin-panel" style="display:none;">
-      <div class="card" style="border-top-color:var(--indigo);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
-          <h3 style="margin:0;">🛡️ Mock Dashboard (Demo Data Only)</h3>
-          <button onclick="deauthorize()" class="btn btn-outline" style="width:auto;padding:8px 16px;">Exit Demo</button>
-        </div>
-
-        <div class="grid">
-          <div class="card accent-gold">
-            <h4>Principal's Workspace (mock)</h4>
-            <p><small>Pretend to publish a news circular — nothing is actually saved.</small></p>
-            <label for="pUpload">Choose a file (not uploaded anywhere)</label>
-            <input type="file" id="pUpload">
-            <button onclick="simUpload('pUpload', 'Principal')" class="btn btn-indigo btn-block" style="margin-top:10px;">Simulate Publish</button>
-          </div>
-          <div class="card accent-clay">
-            <h4>Notices Workspace (mock)</h4>
-            <p><small>Pretend to post a school notice — nothing is actually saved.</small></p>
-            <label for="nUpload">Choose a file (not uploaded anywhere)</label>
-            <input type="file" id="nUpload">
-            <button onclick="simUpload('nUpload', 'Notices')" class="btn btn-clay btn-block" style="margin-top:10px;">Simulate Post</button>
-          </div>
-        </div>
-
-        <div class="terminal" id="consoleLog">&gt; Demo console ready. No data leaves this page.</div>
-      </div>
-    </div>
-
   </div>
 </section>
 
+<div class="ad-slot">
+  <div class="ad-slot-inner">
+    <span class="ad-label">Advertisement Placeholder</span>
+    Ad space reserved for future Google AdSense — not active. Requires a live domain and approved AdSense account.
+  </div>
+</div>
+
 <footer class="site-footer">
-  <h3>Juba Adventist Secondary School</h3>
+  <h3>Juba Seventh-Day Adventist Secondary School</h3>
   <p>Munuki SDA Roundabout, Juba, South Sudan</p>
   <div class="foot-links">
     <a href="index.html">Home</a>
@@ -103,40 +78,16 @@
 </footer>
 
 <script>
-  const LOG = document.getElementById('consoleLog');
-  const DEMO_CODE = "JASS2026"; // Demo only — intentionally visible, not real security.
-
-  function authorize() {
-    const input = document.getElementById('staffKey').value;
-    if (input === DEMO_CODE) {
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      printLog("Demo access granted. (No real account was checked.)");
-    } else {
-      alert("That's not the demo code. Try: JASS2026");
-    }
-  }
-
-  function deauthorize() {
-    document.getElementById('login-form').style.display = 'block';
-    document.getElementById('admin-panel').style.display = 'none';
-    document.getElementById('staffKey').value = '';
-  }
-
-  function simUpload(id, role) {
-    const file = document.getElementById(id).files[0];
-    if (!file) {
-      alert("Choose a file first (it still won't actually be uploaded — this is a demo).");
-      return;
-    }
-    printLog(`[DEMO] ${role} action simulated for file: ${file.name} (not actually saved)`);
-    document.getElementById(id).value = '';
-  }
-
-  function printLog(msg) {
-    const time = new Date().toLocaleTimeString();
-    LOG.innerHTML += `<br>&gt; [${time}] ${msg}`;
-    LOG.scrollTop = LOG.scrollHeight;
+  // Handles Netlify Identity invite/recovery links (e.g. when a staff
+  // member clicks the email invite, this redirects them into the login modal).
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
   }
 </script>
 
